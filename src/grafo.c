@@ -7,31 +7,69 @@ Grafo *novo_Grafo(int n){
     grafo->n = n;
     grafo->m = 0;
 
-    int i;
-    grafo->adj = malloc(n * sizeof(int*));
+    int i, j;
+    grafo->adj = vetor2d(n, n);
+
+    //Preenchendo o grafo com infinito em todas as arestas.
     for(i=0; i<n; i++){
-        grafo->adj[i] = calloc(n, sizeof(int));
+        for(j=0; j<grafo->n; j++){
+            grafo->adj[i][j] = INF;
+        }
     }
+
+    grafo->hiper_arestas = nova_Lista("hiper aresta");
 
     return grafo;
 }
 //Libera o grafo da memória.
-void free_Grafo(Grafo *grafo);
+void free_Grafo(Grafo *grafo){
+    int i;
+    for(i=0; i<grafo->n; i++){
+        free(grafo->adj[i]);
+    }
+    free(grafo->adj);
+
+    free(grafo);
+}
 
 //Insere uma aresta não-direcionada de u para v.
-void grafo_insere_aresta_nd(Grafo *grafo, int u, int v);
+void grafo_insere_aresta_nd(Grafo *grafo, int u, int v, int peso){
+    if((u < grafo->n) && (v < grafo->n)){
+        grafo->adj[u][v] = peso;
+    }
+}
 //Insere uma aresta direcionada entre u e v.
-void grafo_insere_aresta_d(Grafo *grafo, int u, int v);
+void grafo_insere_aresta_d(Grafo *grafo, int u, int v, int peso){
+    grafo_insere_aresta_nd(grafo, u, v, peso);
+    grafo_insere_aresta_nd(grafo, v, u, peso);
+}
 
 //Remove uma aresta não-direcionada de u para v.
-void grafo_remove_aresta_nd(Grafo *grafo, int u, int v);
+void grafo_remove_aresta_nd(Grafo *grafo, int u, int v){
+    if((u < grafo->n) && (v < grafo->n)){
+        grafo->adj[u][v] = INF;
+    }
+}
 //Remove uma aresta direcionada entre u e v.
-void grafo_remove_aresta_d(Grafo *grafo, int u, int v);
+void grafo_remove_aresta_d(Grafo *grafo, int u, int v){
+    grafo_remove_aresta_nd(grafo, u, v);
+    grafo_remove_aresta_nd(grafo, v, u);
+}
 
 //Verifica se existe aresta de u para v.
-int grafo_existe_aresta_nd(Grafo *grafo, int u, int v);
+bool grafo_existe_aresta_nd(Grafo *grafo, int u, int v){
+    if((u < grafo->n) && (v < grafo->n)){
+        if(grafo->adj[u][v] != INF){
+            return true;
+        }
+    }
+    return false;
+}
 //Verifica se existe aresta entre u e v.
-int grafo_existe_aresta_d(Grafo *grafo, int u, int v);
+bool grafo_existe_aresta_d(Grafo *grafo, int u, int v){
+    return ( (grafo_existe_aresta_nd(grafo, u, v)) &&
+             (grafo_existe_aresta_nd(grafo, v, u)) );
+}
 
 //Mostra o grafo na tela.
 void grafo_mostra(Grafo *grafo){

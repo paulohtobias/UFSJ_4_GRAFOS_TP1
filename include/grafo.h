@@ -3,16 +3,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "lista.h"
+#include "utils.h"
 
 #ifndef INF
-#define INF 0x7fffffff
+    #define INF 0x7fffffff
 #endif //INF
 
 typedef struct{
-	int n;		//Quantidade de vértices.
-	int m;		//Quantidade de arestas.
-	int **adj; 	//Matriz de adjacência.
-	//TO-DO: uma lista de vetor pra representar as arestas do hipergrafo.
+	int n;		            //Quantidade de vértices.
+	int m;		            //Quantidade de arestas.
+	int **adj; 	            //Matriz de adjacência.
+	Lista *hiper_arestas;   //Lista de hiper-arestas.
 }Grafo;
 
 //Cria um novo grafo vazio com n vértices.
@@ -21,9 +23,9 @@ Grafo *novo_Grafo(int n);
 void free_Grafo(Grafo *grafo);
 
 //Insere uma aresta não-direcionada de u para v.
-void grafo_insere_aresta_nd(Grafo *grafo, int u, int v);
+void grafo_insere_aresta_nd(Grafo *grafo, int u, int v, int peso);
 //Insere uma aresta direcionada entre u e v.
-void grafo_insere_aresta_d(Grafo *grafo, int u, int v);
+void grafo_insere_aresta_d(Grafo *grafo, int u, int v, int peso);
 
 //Remove uma aresta não-direcionada de u para v.
 void grafo_remove_aresta_nd(Grafo *grafo, int u, int v);

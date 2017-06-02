@@ -14,15 +14,28 @@ No *novo_No(No *anterior, void *dado, No *proximo){
 
 //Operações com Lista.
 //Cria uma nova lista vazia.
-Lista *nova_Lista(size_t sizeof_dado){
+Lista *nova_Lista(char *descricao){
     Lista *lista = malloc(sizeof (Lista));
 
-    lista->size = sizeof_dado;
     lista->tamanho = 0;
+    lista->descricao = malloc(1 + strlen(descricao));
+    strcpy(lista->descricao, descricao);
     lista->primeiro = NULL;
     lista->ultimo = NULL;
 
     return lista;
+}
+//Libera uma lista da memória.
+void free_Lista(Lista *lista, void (*free_data)()){
+    No *temp;
+
+    for(temp = lista->primeiro; temp != NULL; temp = temp->proximo){
+        free_data(temp->dado);
+        lista->tamanho--;
+    }
+    lista->primeiro = lista->ultimo = NULL;
+
+    free(lista);
 }
 
 //Verifica se a lista está vazia.
