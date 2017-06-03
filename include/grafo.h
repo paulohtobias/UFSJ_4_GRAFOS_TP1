@@ -19,6 +19,8 @@ typedef struct{
 
 //Cria um novo grafo vazio com n vértices.
 Grafo *novo_Grafo(int n);
+//Cria um novo grafo a partir de um arquivo.
+Grafo *novo_Grafo_arquivo(char *arquivo);
 //Libera o grafo da memória.
 void free_Grafo(Grafo *grafo);
 
