@@ -23,36 +23,41 @@ bool gui_colore_vertice(GtkButton *vertice, gpointer data){
 	return  true;
 }
 
-gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids){
+GtkWidget *gui_cria_grid(gui_sudoku *sudoku_gui, int *ids, int *cor){
 	int i,j;
-	gui_grid* grid = malloc(sizeof(gui_grid));
 
-	///Inicialização
-	grid->grid = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
-	grid->horizontal = malloc(altura * sizeof(GtkWidget*));
-	grid->button = malloc(altura * sizeof(GtkWidget**));
+	int dimensao = sudoku_gui->sudoku->dimensao;
+	int altura = sudoku_gui->sudoku->altura;
+	int largura = sudoku_gui->sudoku->largura;
+
+	//Inicialização
+	GtkWidget *vertical = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_set_homogeneous(GTK_BOX(vertical), TRUE);
+
+	GtkWidget *horizontal[altura];
 	for(i=0; i<altura; i++){
-		grid->button[i] = malloc(largura * sizeof(GtkWidget*));
+		horizontal[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	}
+
+	for(i=0; i<altura; i++){
+		gtk_box_pack_start(GTK_BOX(vertical), horizontal[i], TRUE, TRUE, 0);
+		gtk_box_set_homogeneous(GTK_BOX(horizontal[i]), TRUE);
 		for(j=0; j<largura; j++){
+			int k = i*largura + j;
+			int *lc = vertice_id_para_sudoku_lc(dimensao, ids[k]);
+			int linha = lc[0];
+			int coluna = lc[1];
+
 			char label[10];
-			sprintf(label, "%d", cor[ ids[i * largura + j] ]);
-			if(cor[ ids[i * largura + j] ] == 0){
+			sprintf(label, "%d", cor[ids[k]]);
+			if(cor[ids[k]] == 0){
 				strcpy(label, " ");
 			}
-			grid->button[i][j] = gtk_button_new_with_label(label);
-
+			sudoku_gui->button[linha][coluna] = gtk_button_new_with_label(label);
+			gtk_box_pack_start(GTK_BOX(horizontal[i]), sudoku_gui->button[linha][coluna], TRUE, TRUE, 0);
 		}
 	}
-
-	for(i=0; i < altura; i++){
-		grid->horizontal[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
-		gtk_box_pack_start(GTK_BOX(grid->grid), grid->horizontal[i], TRUE, TRUE, 0);
-		for(j=0; j<largura; j++){
-			gtk_box_pack_start(GTK_BOX(grid->horizontal[i]), grid->button[i][j], TRUE, TRUE, 0);
-		}
-	}
-
-	return grid;
+	return vertical;
 }
 
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
@@ -73,35 +78,38 @@ gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 
 	sudoku_gui->sudoku = sudoku;
 
-	sudoku_gui->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	sudoku_gui->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
 
 	qnt_separator = linhas * colunas - 1;
-	sudoku_gui->linha = malloc(linhas*sizeof(GtkWidget*));
-	sudoku_gui->grid = malloc(linhas * sizeof(gui_grid**));
-	sudoku_gui->separator = malloc(qnt_separator*sizeof(GtkWidget*));
+	GtkWidget *linha[linhas];
+	GtkWidget *grid[linhas][colunas];
+	GtkWidget *separator[qnt_separator];
+	
+	sudoku_gui->button = malloc(dimensao * sizeof(GtkWidget**));
+	for(i=0; i<dimensao; i++){
+		sudoku_gui->button[i] = malloc(dimensao * sizeof(GtkWidget*));
+	}
 
 	k=0;
 	for(i = 0; i < linhas; i++){
-		sudoku_gui->linha[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-		gtk_box_pack_start(GTK_BOX(sudoku_gui->box), sudoku_gui->linha[i], TRUE, TRUE, 0);
-
-		sudoku_gui->grid[i] = malloc(colunas * sizeof(gui_grid*));
+		linha[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+		gtk_box_set_homogeneous(GTK_BOX(linha[i]), TRUE);
+		gtk_box_pack_start(GTK_BOX(sudoku_gui->box), linha[i], TRUE, TRUE, 0);
 
 		if(i + 1 < linhas){
-			sudoku_gui->separator[k] = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-			gtk_box_pack_start(GTK_BOX(sudoku_gui->box), sudoku_gui->separator[k++], FALSE, TRUE, 5);
+			separator[k] = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+			//gtk_box_pack_start(GTK_BOX(sudoku_gui->box), separator[k++], FALSE, TRUE, 5);
 		}
 		for(j=0; j < colunas; j++){
 
-			sudoku_gui->grid[i][j] = gui_cria_grid(altura, largura, sudoku->grafo->cor, sudoku_ids_quadrante(altura, largura, j, i));
-			gtk_box_pack_start(GTK_BOX(sudoku_gui->linha[i]), sudoku_gui->grid[i][j]->grid, TRUE, TRUE, 0);
+			grid[i][j] = gui_cria_grid(sudoku_gui, sudoku_ids_quadrante(altura, largura, j, i), sudoku->grafo->cor);
+			gtk_box_pack_start(GTK_BOX(linha[i]), grid[i][j], TRUE, TRUE, 0);
 
 			if(j + 1 < colunas){
-				sudoku_gui->separator[k] = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-				gtk_box_pack_start(GTK_BOX(sudoku_gui->linha[i]), sudoku_gui->separator[k++], FALSE, TRUE, 5);
+				separator[k] = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+				//gtk_box_pack_start(GTK_BOX(linha[i]), separator[k++], FALSE, TRUE, 5);
 			}
 		}
-
 	}
 	
 	return sudoku_gui;

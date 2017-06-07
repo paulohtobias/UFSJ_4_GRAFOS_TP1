@@ -14,21 +14,13 @@ typedef struct{
 }gui_colore_vertice_dados;
 
 typedef struct{
-	GtkWidget *grid;
-	GtkWidget **horizontal;
-	GtkWidget ***button;
-}gui_grid;
-
-typedef struct{
 	Sudoku *sudoku;
 
 	GtkWidget *box;
-	GtkWidget **linha;
-	gui_grid ***grid;
-	GtkWidget **separator;
+	GtkWidget ***button;
 }gui_sudoku;
 
-gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids);
+GtkWidget *gui_cria_grid(gui_sudoku *sudoku_gui, int *ids, int *cor);
 
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku);
 
