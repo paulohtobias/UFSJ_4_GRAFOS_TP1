@@ -1,6 +1,12 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
+bool gui_colore_vertice(GtkButton *vertice, gpointer dados){
+	int cor = *((int*)dados);
+	printf("cor: %d\n",cor);
+	return  true;
+}
+
 gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids){
 	int i,j;
 	gui_grid* grid = malloc(sizeof(gui_grid));
@@ -17,7 +23,10 @@ gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids){
 			if(cor[ ids[i * largura + j] ] == 0){
 				strcpy(label, " ");
 			}
+			int *cc = malloc(sizeof(int));
+			*cc = i*largura+j;
 			grid->button[i][j] = gtk_button_new_with_label(label);
+			g_signal_connect(GTK_BUTTON(grid->button[i][j]),"clicked",G_CALLBACK(gui_colore_vertice),(void*)cc);
 
 		}
 	}

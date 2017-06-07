@@ -6,6 +6,14 @@
 #include "sudoku.h"
 
 typedef struct{
+	int id;
+	int cor;
+	int linha;
+	int coluna;
+	Grafo *grafo;
+}gui_colore_dados;
+
+typedef struct{
 	GtkWidget *grid;
 	GtkWidget **horizontal;
 	GtkWidget ***button;
