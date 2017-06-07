@@ -102,6 +102,15 @@ gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 	return sudoku_gui;
 }
 
+//Remove todos os Widgets de um Container
+void gui_container_esvazia(GtkWidget *container){
+	GList *child = gtk_container_get_children(GTK_CONTAINER(container));
+	while(child != NULL){
+		gtk_container_remove(GTK_CONTAINER(container), GTK_WIDGET(child->data));
+		child = child->next;
+	}
+}
+
 int gui(int argc, char *argv[]){
 	GtkBuilder *gtkBuilder;
 	GtkWidget *janela;
@@ -123,6 +132,9 @@ int gui(int argc, char *argv[]){
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), sudoku_gui->box, TRUE, TRUE, 0);
 
 	gtk_widget_show_all(janela);
+	
+	gui_container_esvazia(sudoku_gui->box);
+
 	gtk_main();
 	
 	return 0;

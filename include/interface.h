@@ -24,6 +24,9 @@ GtkWidget *gui_cria_grid(gui_sudoku *sudoku_gui, int *ids, int *cor);
 
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku);
 
+//Remove todos os Widgets de um Container
+void gui_container_esvazia(GtkWidget *container);
+
 int gui(int argc, char *argv[]);
 
 #endif
