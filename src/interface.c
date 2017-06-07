@@ -1,28 +1,8 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
-bool gui_colore_vertice(GtkButton *vertice, gpointer data){
-	gui_colore_vertice_dados *dados = (gui_colore_vertice_dados*)data;
-
-	int id = dados->id;
-	int dimensao = dados->sudoku->dimensao;
-	int altura = dados->sudoku->altura;
-	int largura = dados->sudoku->largura;
-
-	if(dados->id < 0){
-		id = sudoku_lc_para_vertice_id(dimensao, dados->linha, dados->coluna);
-	}
-
-	if(grafo_colore_vertice(dados->sudoku->grafo, id, dados->cor) == true){
-		int *sudoku_lc = vertice_id_para_sudoku_lc(dimensao, id);
-		int sudoku_linha = sudoku_lc[0];
-		int sudoku_coluna = sudoku_lc[1];
-		int *quadrante_dados = sudoku_lc_para_quadrante_lc(sudoku_linha, sudoku_coluna, largura, altura);
-	}
-	
-	return  true;
-}
-
+///Principal
+//Cria um grid.
 GtkWidget *gui_cria_grid(gui_sudoku *sudoku_gui, int *ids, int *cor){
 	int i,j;
 
@@ -59,7 +39,7 @@ GtkWidget *gui_cria_grid(gui_sudoku *sudoku_gui, int *ids, int *cor){
 	}
 	return vertical;
 }
-
+//Cria o Sudoku.
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 	int i, j;
 
@@ -102,6 +82,47 @@ gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 	return sudoku_gui;
 }
 
+///Coloração
+//Inicializa os dados que serão passados para a função gui_colore_vertice
+gui_colore_vertice_dados *gui_colore_dados_novo(gui_sudoku *gsudoku, int id, int linha, int coluna, int cor){
+	gui_colore_vertice_dados *dados = malloc(sizeof(gui_colore_vertice_dados));
+
+	dados->gsudoku = gsudoku;
+	dados->id = id;
+	dados->linha = linha;
+	dados->coluna = coluna;
+	dados->cor = cor;
+
+	return dados;
+}
+//Muda o label do botão se foi possível mudar sua cor.
+bool gui_colore_vertice(GtkButton *vertice, gpointer data){
+	gui_colore_vertice_dados *dados = (gui_colore_vertice_dados*)data;
+
+	int id = dados->id;
+	int dimensao = dados->gsudoku->sudoku->dimensao;
+
+	if(dados->id < 0){
+		//Se o id não estiver definido, então foi usado a posição linha x coluna do Sudoku.
+		id = sudoku_lc_para_vertice_id(dimensao, dados->linha, dados->coluna);
+	}
+
+	if(grafo_colore_vertice(dados->gsudoku->sudoku->grafo, id, dados->cor) == true){
+		int *sudoku_lc = vertice_id_para_sudoku_lc(dimensao, id);
+		int linha = sudoku_lc[0];
+		int coluna = sudoku_lc[1];
+		
+		char label[10];
+		sprintf(label, "%d", dados->cor);
+		gtk_button_set_label(GTK_BUTTON(dados->gsudoku->button[linha][coluna]), label);
+
+		return true;
+	}
+
+	return  false;
+}
+
+///Extra
 //Remove todos os Widgets de um Container
 void gui_container_esvazia(GtkWidget *container){
 	GList *child = gtk_container_get_children(GTK_CONTAINER(container));
@@ -132,8 +153,20 @@ int gui(int argc, char *argv[]){
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), sudoku_gui->box, TRUE, TRUE, 0);
 
 	gtk_widget_show_all(janela);
-	
-	gui_container_esvazia(sudoku_gui->box);
+
+	//Testando a função de colorir
+	printf("colore: %d\n",
+		gui_colore_vertice(
+			NULL,
+			gui_colore_dados_novo(sudoku_gui, -1, 7, 5, 9)
+		)
+	);
+	printf("colore: %d\n",
+		gui_colore_vertice(
+			NULL,
+			gui_colore_dados_novo(sudoku_gui, -1, 7, 2, 9)
+		)
+	);
 
 	gtk_main();
 	
