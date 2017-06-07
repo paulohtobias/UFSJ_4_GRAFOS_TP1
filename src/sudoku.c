@@ -65,6 +65,25 @@ int sudoku_lc_para_vertice_id(int dimensao, int linha, int coluna){
     return (dimensao * linha) + coluna;
 }
 
+//Converte uma posição do Sudoku para a posição do grid.
+int* sudoku_lc_para_quadrante_lc(int linha, int coluna, int largura, int altura){
+    int *info = vetor1d(4);
+
+    int quadrante_y = linha / altura;
+    int quadrante_x = coluna / largura;
+
+    int quadrante_linha = linha % altura;
+    int quadrante_coluna = coluna % largura;
+
+    info[0] = quadrante_y;
+    info[1] = quadrante_x;
+
+    info[2] = quadrante_linha;
+    info[3] = quadrante_coluna;
+
+    return info;
+}
+
 //Converte o id do vértice para uma posição do Sudoku.
 //Retorno: vetor de int com dimensão 2. posição 0: linha
 //                                      posição 1: coluna
