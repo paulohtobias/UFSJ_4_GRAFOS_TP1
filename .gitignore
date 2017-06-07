@@ -3,6 +3,8 @@
 *.ko
 *.obj
 *.elf
+*.d
+obj
 
 # Precompiled Headers
 *.gch
@@ -30,6 +32,9 @@
 
 # Debug files
 *.dSYM/
+
+# VS Code files
+.vscode
 
 # =========================
 # Operating System Files

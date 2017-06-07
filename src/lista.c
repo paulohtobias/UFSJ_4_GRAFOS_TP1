@@ -2,10 +2,11 @@
 
 //Operações com Nó.
 //Cria um novo nó com os parâmetro passados.
-No *novo_No(No *anterior, void *dado, No *proximo){
+No *novo_No(No *anterior, char *descricao, void *dado, No *proximo){
     No *no = malloc(sizeof(No));
 
     no->anterior = anterior;
+    no->descricao = descricao;
     no->dado = dado;
     no->proximo = proximo;
 
@@ -44,8 +45,8 @@ bool lista_vazia(Lista *lista){
 }
 
 //Insere um elemento ao final da lista.
-void lista_insere_final(Lista *lista, void *dado){
-    No *no = novo_No(lista->ultimo, dado, NULL);
+void lista_insere_final(Lista *lista, char *descricao, void *dado){
+    No *no = novo_No(lista->ultimo, descricao, dado, NULL);
 
     if(lista_vazia(lista)){
         lista->primeiro = no;

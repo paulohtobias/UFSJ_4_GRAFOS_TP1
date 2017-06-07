@@ -15,12 +15,13 @@
 //Definição e operações com Nó.
 typedef struct No_{
     struct No_ *anterior;
-    void *dado;
     struct No_ *proximo;
+    char *descricao;
+    void *dado;
 }No;
 
 //Cria um novo nó com os parâmetro passados.
-No *novo_No(No *anterior, void *dado, No *proximo);
+No *novo_No(No *anterior, char *descricao, void *dado, No *proximo);
 
 //Definição e operações com Lista.
 typedef struct Lista_{
@@ -39,6 +40,6 @@ void free_Lista(Lista *lista, void (*free_data)());
 bool lista_vazia(Lista *lista);
 
 //Insere um elemento ao final da lista.
-void lista_insere_final(Lista *lista, void *dado);
+void lista_insere_final(Lista *lista, char *descricao, void *dado);
 
 #endif // LISTA_H

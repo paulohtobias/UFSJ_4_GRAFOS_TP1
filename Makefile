@@ -13,6 +13,9 @@ ODIR = ./obj
 #Paths
 INCLUDE_PATHS = -I$(IDIR)
 
+#Libraries
+LIBS = `pkg-config --cflags --libs gtk+-3.0`
+
 #Compilation line
 COMPILE = $(CC) $(CFLAGS) $(INCLUDE_PATHS)
 
@@ -27,13 +30,13 @@ OBJS = $(INCS:$(IDIR)/%.h=$(ODIR)/%.o)
 DEPS = $(INCS:$(IDIR)/%.h=$(ODIR)/%.d)
 
 all: $(OBJS)
-	$(COMPILE) $(OBJS) main.c -o $(BIN)
+	$(COMPILE) $(OBJS) main.c -o $(BIN) $(LIBS)
 
 # Include all .d files
 -include $(DEPS)
 
 $(ODIR)/%.o: $(SDIR)/%.c $(IDIR)/%.h
-	$(COMPILE) -MMD -c $< -o $@
+	$(COMPILE) -MMD -c $< -o $@ $(LIBS)
 
 .PHONY : clean
 clean :

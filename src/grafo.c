@@ -11,40 +11,14 @@ Grafo *novo_Grafo(int n){
     grafo->adj = vetor2d(n, n);
 
     //Preenchendo o grafo com infinito em todas as arestas.
-    for(i=0; i<n; i++){
-        for(j=0; j<grafo->n; j++){
-            grafo->adj[i][j] = INF;
-        }
-    }
+
+    grafo->cor = vetor1d(n);
 
     grafo->hiper_arestas = nova_Lista("hiper aresta");
 
     return grafo;
 }
-//Cria um novo grafo a partir de um arquivo.
-Grafo *novo_Grafo_arquivo(char *arquivo){
-    FILE *in = fopen(arquivo, "r");
-    if(in == NULL){
-        return NULL;
-    }
 
-    int n, direcionado;
-    fscanf(in, "%d %d\n", &n, &direcionado);
-
-    Grafo *grafo = novo_Grafo(n);
-
-    while(!feof(in)){
-        int u, v, peso;
-        fscanf(in, "%d %d %d\n", &u, &v, &peso);
-        if(direcionado){
-            grafo_insere_aresta_d(grafo, u, v, peso);
-        }else{
-            grafo_insere_aresta_nd(grafo, u, v, peso);
-        }
-    }
-
-    return grafo;
-}
 //Libera o grafo da memória.
 void free_Grafo(Grafo *grafo){
     int i;
@@ -57,14 +31,30 @@ void free_Grafo(Grafo *grafo){
 }
 
 //Insere uma aresta não-direcionada de u para v.
-void grafo_insere_aresta_nd(Grafo *grafo, int u, int v, int peso){
-    grafo_insere_aresta_d(grafo, u, v, peso);
-    grafo_insere_aresta_d(grafo, v, u, peso);
+void grafo_insere_aresta_nd(Grafo *grafo, int u, int v){
+    grafo_insere_aresta_d(grafo, u, v);
+    grafo_insere_aresta_d(grafo, v, u);
 }
 //Insere uma aresta direcionada entre u e v.
-void grafo_insere_aresta_d(Grafo *grafo, int u, int v, int peso){
-    if((u < grafo->n) && (v < grafo->n)){
-        grafo->adj[u][v] = peso;
+void grafo_insere_aresta_d(Grafo *grafo, int u, int v){
+    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
+        grafo->adj[u][v] = 1;
+    }
+}
+
+//Converte uma hiper-aresta para arestas do grafo.
+void grafo_hiper_aresta_para_aresta(Grafo *grafo, int *hiper_aresta){
+    int i, j;
+
+    int id1, id2;
+    for(i=0; i<grafo->n-1; i++){
+        if(hiper_aresta[i] == 1){
+            for(j=i+1; j<grafo->n; j++){
+                if(hiper_aresta[j] == 1){
+                    grafo_insere_aresta_nd(grafo, i, j);
+                }
+            }
+        }
     }
 }
 
@@ -75,24 +65,44 @@ void grafo_remove_aresta_nd(Grafo *grafo, int u, int v){
 }
 //Remove uma aresta direcionada entre u e v.
 void grafo_remove_aresta_d(Grafo *grafo, int u, int v){
-    if((u < grafo->n) && (v < grafo->n)){
-        grafo->adj[u][v] = INF;
+    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
+        grafo->adj[u][v] = 0;
     }
 }
 
 //Verifica se existe aresta de u para v.
 bool grafo_existe_aresta_nd(Grafo *grafo, int u, int v){
-    return ( (grafo_existe_aresta_nd(grafo, u, v)) &&
-             (grafo_existe_aresta_nd(grafo, v, u)) );
+    return ( (grafo_existe_aresta_d(grafo, u, v)) && (grafo_existe_aresta_d(grafo, v, u)) );
 }
 //Verifica se existe aresta entre u e v.
 bool grafo_existe_aresta_d(Grafo *grafo, int u, int v){
-    if((u < grafo->n) && (v < grafo->n)){
-        if(grafo->adj[u][v] != INF){
+    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
+        if(grafo->adj[u][v] != 0){
             return true;
         }
     }
     return false;
+}
+
+//Colore um vértice com a cor indicada.
+//Retorna true (1) se foi possível colorir e false (0) se não.
+bool grafo_colore_vertice(Grafo *grafo, int v, int cor){
+    if(v < 0 || v >= grafo->n){
+        return false;
+    }
+
+    int u;
+
+    //Verifica se algum vértice adjacete à v já possui a mesma cor.
+    for(u=0; u<grafo->n; u++){
+        if(grafo_existe_aresta_nd(grafo, v, u) && grafo->cor[u] == cor){
+            return false;
+        }
+    }
+
+    grafo->cor[v] = cor;
+
+    return true;
 }
 
 //Mostra o grafo na tela.
