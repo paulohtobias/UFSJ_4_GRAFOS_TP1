@@ -7,7 +7,6 @@ Grafo *novo_Grafo(int n){
     grafo->n = n;
     grafo->m = 0;
 
-    int i, j;
     grafo->adj = vetor2d(n, n);
 
     //Preenchendo o grafo com infinito em todas as arestas.
@@ -46,7 +45,6 @@ void grafo_insere_aresta_d(Grafo *grafo, int u, int v){
 void grafo_hiper_aresta_para_aresta(Grafo *grafo, int *hiper_aresta){
     int i, j;
 
-    int id1, id2;
     for(i=0; i<grafo->n-1; i++){
         if(hiper_aresta[i] == 1){
             for(j=i+1; j<grafo->n; j++){

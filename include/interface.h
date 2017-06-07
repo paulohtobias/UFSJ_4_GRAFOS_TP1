@@ -7,11 +7,11 @@
 
 typedef struct{
 	int id;
-	int cor;
 	int linha;
 	int coluna;
-	Grafo *grafo;
-}gui_colore_dados;
+	int cor;
+	Sudoku *sudoku;
+}gui_colore_vertice_dados;
 
 typedef struct{
 	GtkWidget *grid;
@@ -20,9 +20,7 @@ typedef struct{
 }gui_grid;
 
 typedef struct{
-	Grafo *grafo;
-	int altura;
-	int largura;
+	Sudoku *sudoku;
 
 	GtkWidget *box;
 	GtkWidget **linha;
@@ -32,7 +30,7 @@ typedef struct{
 
 gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids);
 
-gui_sudoku* gui_cria_sudoku(Grafo *grafo, int altura, int largura);
+gui_sudoku* gui_cria_sudoku(Sudoku *sudoku);
 
 int gui(int argc, char *argv[]);
 

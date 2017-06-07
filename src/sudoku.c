@@ -1,26 +1,29 @@
 #include "sudoku.h"
 
 //Cria um grafo modelado como um tabuleiro de Sudoku.
-Grafo *novo_Sudoku(char *str_vertices, int largura, int altura){
-    int i, j, k;
+Sudoku *novo_Sudoku(char *str_vertices, int largura, int altura){
+    int i, j;
     int n = strlen(str_vertices);
     int dimensao = raiz_quadrado_perfeito(n);
 
-    Grafo *grafo = novo_Grafo(n);
+    Sudoku *sudoku = malloc(sizeof(Sudoku));
+
+    sudoku->grafo = novo_Grafo(n);
+
+    sudoku->dimensao = dimensao;
+    sudoku->altura = altura;
+    sudoku->largura = largura;
 
     //Criando as arestas.
-    int idh1, idh2;
-    int idv1, idv2;
-
     //Horizontal e Vertical
     for(i=0; i<dimensao; i++){
         char *descricao_h = hiper_aresta_descricao("hiper aresta horizontal", i);
-        lista_insere_final(grafo->hiper_arestas, descricao_h, (void*)vetor1d(grafo->n));
-        int *hiper_aresta_horizontal = grafo->hiper_arestas->ultimo->dado;
+        lista_insere_final(sudoku->grafo->hiper_arestas, descricao_h, (void*)vetor1d(sudoku->grafo->n));
+        int *hiper_aresta_horizontal = sudoku->grafo->hiper_arestas->ultimo->dado;
 
         char *descricao_v = hiper_aresta_descricao("hiper aresta vertical", i);
-        lista_insere_final(grafo->hiper_arestas, descricao_v, (void*)vetor1d(grafo->n));
-        int *hiper_aresta_vertical = grafo->hiper_arestas->ultimo->dado;
+        lista_insere_final(sudoku->grafo->hiper_arestas, descricao_v, (void*)vetor1d(sudoku->grafo->n));
+        int *hiper_aresta_vertical = sudoku->grafo->hiper_arestas->ultimo->dado;
 
         for(j=0; j<dimensao; j++){
             int idh = sudoku_lc_para_vertice_id(dimensao, i, j);
@@ -29,8 +32,8 @@ Grafo *novo_Sudoku(char *str_vertices, int largura, int altura){
             int idv = sudoku_lc_para_vertice_id(dimensao, j, i);
             hiper_aresta_vertical[idv] = 1;
         }
-        grafo_hiper_aresta_para_aresta(grafo, hiper_aresta_horizontal);
-        grafo_hiper_aresta_para_aresta(grafo, hiper_aresta_vertical);
+        grafo_hiper_aresta_para_aresta(sudoku->grafo, hiper_aresta_horizontal);
+        grafo_hiper_aresta_para_aresta(sudoku->grafo, hiper_aresta_vertical);
     }
 
     //Horizontal e Vertical
@@ -50,14 +53,14 @@ Grafo *novo_Sudoku(char *str_vertices, int largura, int altura){
         }
     }*/
     //Quadrantes
-    sudoku_conecta_quadrantes(grafo, largura, altura);
+    sudoku_conecta_quadrantes(sudoku);
 
     //Coloração inicial.
-    for(i=0; i<grafo->n; i++){
-        grafo->cor[i] = str_vertices[i] - '0';
+    for(i=0; i<sudoku->grafo->n; i++){
+        sudoku->grafo->cor[i] = str_vertices[i] - '0';
     }
 
-    return grafo;
+    return sudoku;
 }
 
 //Converte uma posição do Sudoku para o id do vértice.
@@ -88,24 +91,31 @@ int* sudoku_lc_para_quadrante_lc(int linha, int coluna, int largura, int altura)
 //Retorno: vetor de int com dimensão 2. posição 0: linha
 //                                      posição 1: coluna
 int *vertice_id_para_sudoku_lc(int dimensao, int id){
-    return NULL;
+    int *lc = vetor1d(2);
+
+    lc[0] = id / dimensao;
+    lc[1] = id % dimensao;
+
+    return lc;
 }
 
 //Conecta um quadrante do Sudoku.
-void sudoku_conecta_quadrantes(Grafo *grafo, int largura, int altura){
+void sudoku_conecta_quadrantes(Sudoku *sudoku){
     int i, j, k;
+
+    int largura = sudoku->largura;
+    int altura = sudoku->altura;
 
     int id;
 
-    int dimensao = raiz_quadrado_perfeito(grafo->n);
-    int quadrantes = grafo->n / (largura * altura);
+    int dimensao = raiz_quadrado_perfeito(sudoku->grafo->n);
+    int quadrantes = sudoku->grafo->n / (largura * altura);
     int quadrantes_horizontal = dimensao / largura;
-    int quadrantes_vertical = dimensao / altura;
 
     for(k=0; k<quadrantes; k++){
         char *descricao = hiper_aresta_descricao("hiper aresta quadrante", k);
-        lista_insere_final(grafo->hiper_arestas, descricao, (void*)vetor1d(grafo->n));
-        int *hiper_aresta = grafo->hiper_arestas->ultimo->dado;
+        lista_insere_final(sudoku->grafo->hiper_arestas, descricao, (void*)vetor1d(sudoku->grafo->n));
+        int *hiper_aresta = sudoku->grafo->hiper_arestas->ultimo->dado;
 
         //printf("Quadrante %d\n", k);
 
@@ -129,8 +139,8 @@ void sudoku_conecta_quadrantes(Grafo *grafo, int largura, int altura){
         }*/
     }
     No *temp;
-    for(temp = grafo->hiper_arestas->primeiro; temp != NULL; temp = temp->proximo){
-        grafo_hiper_aresta_para_aresta(grafo, (int*)temp->dado);
+    for(temp = sudoku->grafo->hiper_arestas->primeiro; temp != NULL; temp = temp->proximo){
+        grafo_hiper_aresta_para_aresta(sudoku->grafo, (int*)temp->dado);
     }
 }
 
@@ -155,7 +165,6 @@ int *sudoku_ids_quadrante(int altura, int largura, int x, int y){
     for(i=i_inicio; i<i_final; i++){
         for(j=j_inicio; j<j_final; j++){
             ids[k++] = sudoku_lc_para_vertice_id(altura * largura, i, j);
-            //printf("%d\n", ids[k-1]);
         }
     }
     return ids;

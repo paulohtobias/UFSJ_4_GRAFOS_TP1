@@ -3,8 +3,15 @@
 
 #include "grafo.h"
 
+typedef struct{
+    Grafo *grafo;
+    int dimensao;
+    int altura;
+    int largura;
+}Sudoku;
+
 //Cria um grafo modelado como um tabuleiro de Sudoku.
-Grafo *novo_Sudoku(char *str_vertices, int largura, int altura);
+Sudoku *novo_Sudoku(char *str_vertices, int largura, int altura);
 
 //Converte uma posi��o do Sudoku para o id do v�rtice.
 int sudoku_lc_para_vertice_id(int dimensao, int linha, int coluna);
@@ -18,7 +25,7 @@ int* sudoku_lc_para_quadrante_lc(int linha, int coluna, int largura, int altura)
 int *vertice_id_para_sudoku_lc(int dimensao, int id);
 
 //Conecta um quadrante do Sudoku.
-void sudoku_conecta_quadrantes(Grafo *grafo, int largura, int altura);
+void sudoku_conecta_quadrantes(Sudoku *grafo);
 
 //Descri��o de uma hiper-aresta do sudoku.
 char *hiper_aresta_descricao(char *format, int numero);

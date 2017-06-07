@@ -1,9 +1,25 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
-bool gui_colore_vertice(GtkButton *vertice, gpointer dados){
-	int cor = *((int*)dados);
-	printf("cor: %d\n",cor);
+bool gui_colore_vertice(GtkButton *vertice, gpointer data){
+	gui_colore_vertice_dados *dados = (gui_colore_vertice_dados*)data;
+
+	int id = dados->id;
+	int dimensao = dados->sudoku->dimensao;
+	int altura = dados->sudoku->altura;
+	int largura = dados->sudoku->largura;
+
+	if(dados->id < 0){
+		id = sudoku_lc_para_vertice_id(dimensao, dados->linha, dados->coluna);
+	}
+
+	if(grafo_colore_vertice(dados->sudoku->grafo, id, dados->cor) == true){
+		int *sudoku_lc = vertice_id_para_sudoku_lc(dimensao, id);
+		int sudoku_linha = sudoku_lc[0];
+		int sudoku_coluna = sudoku_lc[1];
+		int *quadrante_dados = sudoku_lc_para_quadrante_lc(sudoku_linha, sudoku_coluna, largura, altura);
+	}
+	
 	return  true;
 }
 
@@ -23,10 +39,7 @@ gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids){
 			if(cor[ ids[i * largura + j] ] == 0){
 				strcpy(label, " ");
 			}
-			int *cc = malloc(sizeof(int));
-			*cc = i*largura+j;
 			grid->button[i][j] = gtk_button_new_with_label(label);
-			g_signal_connect(GTK_BUTTON(grid->button[i][j]),"clicked",G_CALLBACK(gui_colore_vertice),(void*)cc);
 
 		}
 	}
@@ -42,57 +55,63 @@ gui_grid* gui_cria_grid(int altura, int largura, int *cor, int *ids){
 	return grid;
 }
 
-gui_sudoku* gui_cria_sudoku(Grafo *grafo, int altura, int largura){
+gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 	int i, j, k;
-	int linhas, colunas, qnt_separator, dimensao;
-	
-	///inicialização
-	gui_sudoku *sudoku = malloc(sizeof(gui_sudoku));
-	sudoku->altura = altura;
-	sudoku->largura = largura;
-	sudoku->grafo = grafo;
 
-	sudoku->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	//Atributos do Sudoku.
+	int dimensao, altura, largura;
+	int linhas, colunas, qnt_separator;
 
-	dimensao = altura * largura;
+	dimensao = sudoku->dimensao;
+	altura = sudoku->altura;
+	largura = sudoku->largura;
 	linhas = dimensao/altura;
 	colunas= dimensao/largura;
+	
+	///Inicialização
+	gui_sudoku *sudoku_gui = malloc(sizeof(gui_sudoku));
+
+	sudoku_gui->sudoku = sudoku;
+
+	sudoku_gui->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
 	qnt_separator = linhas * colunas - 1;
-	sudoku->linha = malloc(linhas*sizeof(GtkWidget*));
-	sudoku->grid = malloc(linhas * sizeof(gui_grid**));
-	sudoku->separator = malloc(qnt_separator*sizeof(GtkWidget*));
+	sudoku_gui->linha = malloc(linhas*sizeof(GtkWidget*));
+	sudoku_gui->grid = malloc(linhas * sizeof(gui_grid**));
+	sudoku_gui->separator = malloc(qnt_separator*sizeof(GtkWidget*));
 
 	k=0;
 	for(i = 0; i < linhas; i++){
-		sudoku->linha[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-		gtk_box_pack_start(GTK_BOX(sudoku->box), sudoku->linha[i], TRUE, TRUE, 0);
+		sudoku_gui->linha[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+		gtk_box_pack_start(GTK_BOX(sudoku_gui->box), sudoku_gui->linha[i], TRUE, TRUE, 0);
 
-		sudoku->grid[i] = malloc(colunas * sizeof(gui_grid*));
+		sudoku_gui->grid[i] = malloc(colunas * sizeof(gui_grid*));
 
 		if(i + 1 < linhas){
-			sudoku->separator[k] = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-			gtk_box_pack_start(GTK_BOX(sudoku->box), sudoku->separator[k++], FALSE, TRUE, 5);
+			sudoku_gui->separator[k] = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+			gtk_box_pack_start(GTK_BOX(sudoku_gui->box), sudoku_gui->separator[k++], FALSE, TRUE, 5);
 		}
 		for(j=0; j < colunas; j++){
 
-			sudoku->grid[i][j] = gui_cria_grid(altura, largura, grafo->cor, sudoku_ids_quadrante(altura, largura, j, i));
-			gtk_box_pack_start(GTK_BOX(sudoku->linha[i]), sudoku->grid[i][j]->grid, TRUE, TRUE, 0);
+			sudoku_gui->grid[i][j] = gui_cria_grid(altura, largura, sudoku->grafo->cor, sudoku_ids_quadrante(altura, largura, j, i));
+			gtk_box_pack_start(GTK_BOX(sudoku_gui->linha[i]), sudoku_gui->grid[i][j]->grid, TRUE, TRUE, 0);
 
 			if(j + 1 < colunas){
-				sudoku->separator[k] = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
-				gtk_box_pack_start(GTK_BOX(sudoku->linha[i]), sudoku->separator[k++], FALSE, TRUE, 5);
+				sudoku_gui->separator[k] = gtk_separator_new(GTK_ORIENTATION_VERTICAL);
+				gtk_box_pack_start(GTK_BOX(sudoku_gui->linha[i]), sudoku_gui->separator[k++], FALSE, TRUE, 5);
 			}
 		}
 
 	}
 	
-	return sudoku;
+	return sudoku_gui;
 }
 
 int gui(int argc, char *argv[]){
 	GtkBuilder *gtkBuilder;
 	GtkWidget *janela;
-	Grafo *grafo = novo_Sudoku("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
+
+	Sudoku *sudoku = novo_Sudoku("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
 
 	gtk_init(&argc, &argv);
 	
@@ -104,9 +123,9 @@ int gui(int argc, char *argv[]){
 
 	GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(gtkBuilder,"lado_esquerdo"));
 	
-	gui_sudoku *sudoku = gui_cria_sudoku(grafo, 3, 3);
+	gui_sudoku *sudoku_gui = gui_cria_sudoku(sudoku);
 
-	gtk_box_pack_start(GTK_BOX(lado_esquerdo), sudoku->box, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(lado_esquerdo), sudoku_gui->box, TRUE, TRUE, 0);
 
 	gtk_widget_show_all(janela);
 	gtk_main();
