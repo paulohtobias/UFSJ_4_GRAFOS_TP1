@@ -1,7 +1,36 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
+int valor_a_inserir;
 gui_sudoku *gsudoku;
+
+///Define o valor a ser inserido no sudoku
+void define_valor_a_inserir(GtkButton *button, gpointer data){
+	int valor = atoi((char*)data);
+	printf("insere: %d\n", valor);
+	valor_a_inserir = valor;
+}
+
+///Cria selecionador dinâmico
+gui_selecionador* gui_cria_selecionador(int altura, int largura){
+	int i;
+	char label[10];
+	int dimensao = altura*largura;
+	gui_selecionador* selecionador = malloc(sizeof(gui_selecionador));
+
+	selecionador->box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL,0);
+	selecionador->button = calloc(sizeof(GtkWidget*),dimensao+1);
+	for(i = 0; i < dimensao; i++){
+		sprintf(label,"%d",i+1);
+		selecionador->button[i] = gtk_button_new_with_label(label);
+		g_signal_connect(G_OBJECT(selecionador->button[i]),"clicked",G_CALLBACK(define_valor_a_inserir),(void*)gtk_button_get_label(GTK_BUTTON(selecionador->button[i])));
+		gtk_box_pack_start(GTK_BOX(selecionador->box),selecionador->button[i],TRUE,TRUE,0);
+	}
+	selecionador->button[dimensao] = gtk_button_new_with_label("Limpa");
+	g_signal_connect(G_OBJECT(selecionador->button[i]),"clicked",G_CALLBACK(define_valor_a_inserir),(void*)"0");
+	gtk_box_pack_start(GTK_BOX(selecionador->box),selecionador->button[dimensao],TRUE,TRUE,0);
+	return selecionador;
+} 
 
 ///Principal
 //Cria um grid.
@@ -61,6 +90,8 @@ gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
 	gsudoku->sudoku = sudoku;
 
 	gsudoku->box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+
+	gsudoku->selecionador = gui_cria_selecionador(altura,largura);
 
 	GtkWidget *linha[linhas];
 	GtkWidget *grid[linhas][colunas];
@@ -152,6 +183,7 @@ int gui(int argc, char *argv[]){
 	gsudoku = gui_cria_sudoku(sudoku);
 
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->box, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->selecionador->box, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(janela);
 
