@@ -13,7 +13,7 @@ void get_lc_botao(GtkButton *button, int *linha, int *coluna){
 	int dimensao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
 	for(i = 0; i < dimensao; i++){
 		for(j = 0; j < dimensao; j++){
-			if(button == gsudoku->button[i][j]){
+			if(button == GTK_BUTTON(gsudoku->button[i][j])){
 				*linha = i;
 				*coluna= j;
 				return;

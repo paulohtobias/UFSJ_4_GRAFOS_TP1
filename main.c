@@ -1,4 +1,4 @@
-#include "heuristica_paulo.h"
+#include "heuristica.h"
 #include "interface.h"
 
 int main(int argc , char *argv[]){

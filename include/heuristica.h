@@ -1,7 +1,9 @@
-#ifndef HEURISTICA_PAULO_H
-#define HEURISTICA_PAULO_H
+#ifndef HEURISTICA_H
+#define HEURISTICA_H
 
 #include "sudoku.h"
+#include <sys/time.h>
+#include <sys/resource.h>
 
 /**
   * Dados necessários:
@@ -10,20 +12,19 @@
   *     - heap (?)
   */
 
-/**
-  * Mudança de planos:
-  * é preciso armazenar onde as cores se encaixam, e não quais vértices podem ter quais cores.
-  * tem que ver onde o 5 pode ir, aí checa se duas cores entram em conflito.
-  */
-
 //Tenta colorir um vértice. Se conseguir, então a matriz de
 //possibilidades é atualizada.
-void heuristica_pht_colore(Grafo *grafo, int id, int cor);
+void heuristica_colore(Grafo *grafo, int id, int cor);
 
 void heuristica_pht(Sudoku *sudoku);
+
+int heuristica_vertice(Sudoku *sudoku);
+int heuristica_hiper_aresta(Sudoku *sudoku);
 
 void printP(int n, int d);
 
 void printS(Sudoku *sudoku);
 
-#endif //HEURISTICA_PAULO_H
+int sfim(Grafo *g);
+
+#endif //HEURISTICA_H

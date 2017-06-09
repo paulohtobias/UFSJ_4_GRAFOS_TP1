@@ -1,0 +1,4 @@
+* primeiro olha por vértice: quais cores o vértice I pode ter.
+* depois, pra cada hiper-aresta, olha se uma cor pode ir em mais de um vértice. Se for só em um, colore.
+
+QUANDO FOR OLHAR SE UMA COR PODE NUM VÉRTICE, OLHAR AS TRÊS HIPER-ARESTAS AO MESMO TEMPO.
