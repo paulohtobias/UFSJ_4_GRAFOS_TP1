@@ -1,25 +1,67 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
+int valores_vazios;
 int valor_a_inserir;
 gui_sudoku *gsudoku;
 
+void get_lc_botao(GtkButton *button, int *linha, int *coluna){
+	int i;
+	int j;
+	*linha = -1;
+	*coluna= -1;
+	int dimensao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
+	for(i = 0; i < dimensao; i++){
+		for(j = 0; j < dimensao; j++){
+			if(button == gsudoku->button[i][j]){
+				*linha = i;
+				*coluna= j;
+				return;
+			}
+		}
+	}
+}
+
+///Altera os labels dos botões acessíveis
 void gui_button_signal(GtkButton *button, gpointer data){
+	int linha, coluna;
 	char label[10];
 	sprintf(label,"%d",valor_a_inserir);
 	if(valor_a_inserir > 0){
-		gtk_button_set_label(GTK_BUTTON(button),label);
+		get_lc_botao(button,&linha,&coluna);
+		if(!gui_colore_vertice(button,gui_colore_dados_novo(-1,linha,coluna,valor_a_inserir))){
+			printf("Nao coloriu os vertices\n");
+		}else{
+			valores_vazios--;
+			if(valores_vazios < 0){
+				int i,j;
+				int dimencao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
+				for(i = 0; i < dimencao; i++){
+					for(j = 0; j < dimencao; j++){
+						gtk_widget_set_sensitive(GTK_WIDGET(gsudoku->button[i][j]),FALSE);
+					}
+				}
+			}
+		}
 	}else{
+		//////Definir uma forma de remover o valor dos vértices
+		valores_vazios++;
+		get_lc_botao(button,&linha,&coluna);
+		gui_colore_vertice(button,gui_colore_dados_novo(-1,linha,coluna,0));
 		gtk_button_set_label(GTK_BUTTON(button)," ");
 	}
 }
 
+///Gera os sinais para os botões
 void gui_define_sinal_para_button(){
 	int i, j;
 	int dimensao = gsudoku->sudoku->largura*gsudoku->sudoku->altura;
+
+	valores_vazios = 0;
 	for(i = 0; i < dimensao; i++){
 		for(j = 0; j < dimensao; j++){
 			if(strcmp(gtk_button_get_label(GTK_BUTTON(gsudoku->button[i][j]))," ")==0){
+				valores_vazios++;
 				g_signal_connect(G_OBJECT(gsudoku->button[i][j]),"clicked",G_CALLBACK(gui_button_signal),NULL);
 			}else{
 				gtk_widget_set_sensitive(GTK_WIDGET(gsudoku->button[i][j]),FALSE);
@@ -151,6 +193,7 @@ gui_colore_vertice_dados *gui_colore_dados_novo(int id, int linha, int coluna, i
 
 	return dados;
 }
+
 //Muda o label do botão se foi possível mudar sua cor.
 bool gui_colore_vertice(GtkButton *vertice, gpointer data){
 	gui_colore_vertice_dados *dados = (gui_colore_vertice_dados*)data;

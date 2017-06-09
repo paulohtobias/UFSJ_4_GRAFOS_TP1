@@ -27,6 +27,12 @@ typedef struct{
 	int cor;
 }gui_colore_vertice_dados;
 
+///Altera os labels dos botões acessíveis
+void gui_button_signal(GtkButton *button, gpointer data);
+
+///Gera os sinais para os botões
+void gui_define_sinal_para_button();
+
 ///Cria um bloco que seleciona um número para inserir no sudoku 
 gui_selecionador* gui_cria_selecionador(int altura, int largura);
 
