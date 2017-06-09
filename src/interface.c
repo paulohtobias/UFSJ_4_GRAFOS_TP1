@@ -19,7 +19,11 @@ void gui_define_sinal_para_button(){
 	int dimensao = gsudoku->sudoku->largura*gsudoku->sudoku->altura;
 	for(i = 0; i < dimensao; i++){
 		for(j = 0; j < dimensao; j++){
-			g_signal_connect(G_OBJECT(gsudoku->button[i][j]),"clicked",G_CALLBACK(gui_button_signal),NULL);
+			if(strcmp(gtk_button_get_label(GTK_BUTTON(gsudoku->button[i][j]))," ")==0){
+				g_signal_connect(G_OBJECT(gsudoku->button[i][j]),"clicked",G_CALLBACK(gui_button_signal),NULL);
+			}else{
+				gtk_widget_set_sensitive(GTK_WIDGET(gsudoku->button[i][j]),FALSE);
+			}
 		}
 	}
 }
