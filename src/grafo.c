@@ -89,12 +89,13 @@ bool grafo_colore_vertice(Grafo *grafo, int v, int cor){
         return false;
     }
 
-    int u;
-
-    //Verifica se algum vértice adjacete à v já possui a mesma cor.
-    for(u=0; u<grafo->n; u++){
-        if(grafo_existe_aresta_nd(grafo, v, u) && grafo->cor[u] == cor){
-            return false;
+    if(cor > 0){
+        //Verifica se algum vértice adjacete à v já possui a mesma cor.
+        int u;
+        for(u=0; u<grafo->n; u++){
+            if(grafo_existe_aresta_nd(grafo, v, u) && grafo->cor[u] == cor){
+                return false;
+            }
         }
     }
 
