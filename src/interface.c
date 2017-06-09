@@ -4,6 +4,26 @@
 int valor_a_inserir;
 gui_sudoku *gsudoku;
 
+void gui_button_signal(GtkButton *button, gpointer data){
+	char label[10];
+	sprintf(label,"%d",valor_a_inserir);
+	if(valor_a_inserir > 0){
+		gtk_button_set_label(GTK_BUTTON(button),label);
+	}else{
+		gtk_button_set_label(GTK_BUTTON(button)," ");
+	}
+}
+
+void gui_define_sinal_para_button(){
+	int i, j;
+	int dimensao = gsudoku->sudoku->largura*gsudoku->sudoku->altura;
+	for(i = 0; i < dimensao; i++){
+		for(j = 0; j < dimensao; j++){
+			g_signal_connect(G_OBJECT(gsudoku->button[i][j]),"clicked",G_CALLBACK(gui_button_signal),NULL);
+		}
+	}
+}
+
 ///Define o valor a ser inserido no sudoku
 void define_valor_a_inserir(GtkButton *button, gpointer data){
 	int valor = atoi((char*)data);
@@ -181,6 +201,7 @@ int gui(int argc, char *argv[]){
 	GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(gtkBuilder,"lado_esquerdo"));
 	
 	gsudoku = gui_cria_sudoku(sudoku);
+	gui_define_sinal_para_button();
 
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->box, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->selecionador->box, FALSE, FALSE, 0);

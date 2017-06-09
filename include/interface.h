@@ -27,6 +27,7 @@ typedef struct{
 	int cor;
 }gui_colore_vertice_dados;
 
+///Cria um bloco que seleciona um número para inserir no sudoku 
 gui_selecionador* gui_cria_selecionador(int altura, int largura);
 
 //Cria um grid.
