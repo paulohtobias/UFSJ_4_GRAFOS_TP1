@@ -5,9 +5,9 @@ int valores_vazios;
 int valor_a_inserir;
 gui_sudoku *gsudoku;
 
+///Pega a linha e a coluna do botão correspondente
 void get_lc_botao(GtkButton *button, int *linha, int *coluna){
-	int i;
-	int j;
+	int i, j;
 	*linha = -1;
 	*coluna= -1;
 	int dimensao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
@@ -27,13 +27,19 @@ void gui_button_signal(GtkButton *button, gpointer data){
 	int linha, coluna;
 	char label[10];
 	sprintf(label,"%d",valor_a_inserir);
+	///Se o valor já foi inserido nessa posição, ignore
+	if(atoi(gtk_button_get_label(GTK_BUTTON(button)))==valor_a_inserir){
+		return;
+	}
+
+	///Se o valor a ser inserido é maior que zero, indica preencher uma posição
 	if(valor_a_inserir > 0){
-		get_lc_botao(button,&linha,&coluna);
-		if(!gui_colore_vertice(button,gui_colore_dados_novo(-1,linha,coluna,valor_a_inserir))){
-			printf("Nao coloriu os vertices\n");
-		}else{
-			valores_vazios--;
-			if(valores_vazios < 0){
+		get_lc_botao(button,&linha,&coluna); //Pega a coordenada do botão
+		///Se o valor a ser inserido é válido, remove uma posição vazia
+		if(gui_colore_vertice(button,gui_colore_dados_novo(-1,linha,coluna,valor_a_inserir))){
+			valores_vazios--; //Reduz posições vazias
+			///Se o contador chegar a zero ou menos, indica que o sudoku está completo
+			if(valores_vazios <= 0){ //Trava todos os botões
 				int i,j;
 				int dimencao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
 				for(i = 0; i < dimencao; i++){
@@ -43,9 +49,9 @@ void gui_button_signal(GtkButton *button, gpointer data){
 				}
 			}
 		}
+	///Se o valor não for maior que 0, então irá remover posições preenchidas
 	}else{
-		//////Definir uma forma de remover o valor dos vértices
-		valores_vazios++;
+		valores_vazios++; //Aumenta posições vazias
 		get_lc_botao(button,&linha,&coluna);
 		gui_colore_vertice(button,gui_colore_dados_novo(-1,linha,coluna,0));
 		gtk_button_set_label(GTK_BUTTON(button)," ");
@@ -57,13 +63,14 @@ void gui_define_sinal_para_button(){
 	int i, j;
 	int dimensao = gsudoku->sudoku->largura*gsudoku->sudoku->altura;
 
-	valores_vazios = 0;
+	valores_vazios = 0; //Contador de posições vazias
 	for(i = 0; i < dimensao; i++){
 		for(j = 0; j < dimensao; j++){
-			if(strcmp(gtk_button_get_label(GTK_BUTTON(gsudoku->button[i][j]))," ")==0){
+			///Se a label do botão é vazia indica uma posição válida a ser inserida
+			if(strcmp(gtk_button_get_label(GTK_BUTTON(gsudoku->button[i][j]))," ")==0){ //É clicavel
 				valores_vazios++;
 				g_signal_connect(G_OBJECT(gsudoku->button[i][j]),"clicked",G_CALLBACK(gui_button_signal),NULL);
-			}else{
+			}else{ //Não é clicavel
 				gtk_widget_set_sensitive(GTK_WIDGET(gsudoku->button[i][j]),FALSE);
 			}
 		}
@@ -256,7 +263,7 @@ int gui(int argc, char *argv[]){
 	gtk_widget_show_all(janela);
 
 	//Testando a função de colorir
-	printf("colore: %d\n",
+	/*printf("colore: %d\n",
 		gui_colore_vertice(
 			NULL,
 			gui_colore_dados_novo(-1, 7, 5, 9)
@@ -268,7 +275,7 @@ int gui(int argc, char *argv[]){
 			NULL,
 			gui_colore_dados_novo(-1, 7, 2, 9)
 		)
-	);
+	);*/
 
 	gtk_main();
 	

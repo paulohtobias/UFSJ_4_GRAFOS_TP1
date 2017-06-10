@@ -27,6 +27,9 @@ typedef struct{
 	int cor;
 }gui_colore_vertice_dados;
 
+///Pega a linha e a coluna do botão correspondente
+void get_lc_botao(GtkButton *button, int *linha, int *coluna);
+
 ///Altera os labels dos botões acessíveis
 void gui_button_signal(GtkButton *button, gpointer data);
 
