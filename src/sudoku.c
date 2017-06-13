@@ -1,21 +1,21 @@
 #include "sudoku.h"
 
-//Cria um grafo modelado como um tabuleiro de Sudoku.
-Sudoku *novo_Sudoku(char *str_vertices, int largura, int altura){
-    int i, j;
-    int n = strlen(str_vertices);
-    int dimensao = raiz_quadrado_perfeito(n);
-
+//Cria um Sudoku vazio modelado como um grafo.
+Sudoku *novo_Sudoku(int altura, int largura){
     Sudoku *sudoku = malloc(sizeof(Sudoku));
 
+    int dimensao = altura * largura;
+    int n = dimensao * dimensao;
+    
     sudoku->grafo = novo_Grafo(n);
 
     sudoku->dimensao = dimensao;
     sudoku->altura = altura;
     sudoku->largura = largura;
 
-    //Criando as arestas.
+    ///Criando as arestas.
     //Horizontal e Vertical
+    int i, j;
     for(i=0; i<dimensao; i++){
         char *descricao_h = hiper_aresta_descricao("hiper aresta horizontal", i);
         lista_insere_final(sudoku->grafo->hiper_arestas, descricao_h, (void*)vetor1d(sudoku->grafo->n));
@@ -35,32 +35,40 @@ Sudoku *novo_Sudoku(char *str_vertices, int largura, int altura){
         grafo_hiper_aresta_para_aresta(sudoku->grafo, hiper_aresta_horizontal);
         grafo_hiper_aresta_para_aresta(sudoku->grafo, hiper_aresta_vertical);
     }
-
-    //Horizontal e Vertical
-    /*for(k=0; k<dimensao-1; k++){
-        for(i=0; i<dimensao; i++){
-            idh1 = sudoku_lc_para_vertice_id(dimensao, i, k);
-            idv1 = sudoku_lc_para_vertice_id(dimensao, k, i);
-            for(j=k+1; j<dimensao; j++){
-                idh2 = sudoku_lc_para_vertice_id(dimensao, i, j);
-                idv2 = sudoku_lc_para_vertice_id(dimensao, j, i);
-
-                //printf("aresta %d, %d  || ID:(%d, %d)\n", i, j, id1, id2);
-
-                grafo_insere_aresta_nd(grafo, idh1, idh2);
-                grafo_insere_aresta_nd(grafo, idv1, idv2);
-            }
-        }
-    }*/
     //Quadrantes
     sudoku_conecta_quadrantes(sudoku);
 
-    //Coloração inicial.
-    for(i=0; i<sudoku->grafo->n; i++){
-        sudoku->grafo->cor[i] = str_vertices[i] - '0';
-    }
+    return sudoku;
+}
+
+
+//Cria um Sudoku modelado como um grafo a partir de uma string.
+Sudoku *novo_Sudoku_de_string(char *str_vertices, int altura, int largura){
+    Sudoku *sudoku = novo_Sudoku(altura, largura);
+
+    sudoku_coloracao_string(sudoku, str_vertices);
 
     return sudoku;
+}
+
+//Cria um Sudoku modelado como um grafo a partir de um arquivo.
+Sudoku *novo_Sudoku_de_arquivo(char *arquivo){
+    //Abrindo o arquivo.
+    FILE *in = fopen(arquivo, "r");
+    if(in == NULL){
+        return NULL;
+    }
+
+    return NULL;
+}
+
+//Gera coloração inicial para um Sudoku a partir de uma string.
+void sudoku_coloracao_string(Sudoku *sudoku, char *coloracao){
+    int i;
+    //Coloração inicial.
+    for(i=0; i<sudoku->grafo->n; i++){
+        sudoku->grafo->cor[i] = coloracao[i] - '0';
+    }
 }
 
 //Converte uma posição do Sudoku para o id do vértice.

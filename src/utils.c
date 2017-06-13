@@ -17,8 +17,19 @@ int **vetor2d(int d1, int d2){
     return v2;
 }
 
+//Substring
+char *substring(char *str, int inicio, int fim){
+    char *sub = calloc(fim - inicio + 1, 1);
+    int i;
+    for(i=inicio; i<fim; i++){
+        sub[i-inicio] = str[i];
+    }
+    return sub;
+}
+
+//Sub vetor
 int *sub_vetor(int *vetor, int inicio, int fim){
-    int *sub = vetor1d(inicio-fim);
+    int *sub = vetor1d(fim - inicio);
     int i;
     for(i=inicio; i<fim; i++){
         sub[i-inicio] = vetor[i];
