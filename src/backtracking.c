@@ -65,10 +65,11 @@ void exato_colore(Grafo *grafo, int id, int cor){
     }
 }
 
+//Função principal.
 void algoritmo_exato(Sudoku *sudoku){
 	inicializa_possibilidades(sudoku);
 
-    int coloriu;
+    int coloriu = 0;
     while(!sfim(sudoku->grafo)){
         coloriu = 0;
         
@@ -84,6 +85,7 @@ void algoritmo_exato(Sudoku *sudoku){
 	printf("Deu certo!\n");
 }
 
+//Funções de poda. Podem resolver o sudoku.
 int poda_vertice(Sudoku *sudoku){
     int i;
     int n = sudoku->grafo->n;
@@ -102,8 +104,6 @@ int poda_vertice(Sudoku *sudoku){
     }
     return coloriu;
 }
-
-
 int poda_hiper_aresta(Sudoku *sudoku){
     int c, i;
     No *temp;
