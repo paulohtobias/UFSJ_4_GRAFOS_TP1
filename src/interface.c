@@ -242,7 +242,8 @@ int gui(int argc, char *argv[]){
 	GtkBuilder *gtkBuilder;
 	GtkWidget *janela;
 
-	Sudoku *sudoku = novo_Sudoku("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
+	//Sudoku *sudoku = novo_Sudoku("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
+	Sudoku *sudoku;
 
 	gtk_init(&argc, &argv);
 	
@@ -261,21 +262,6 @@ int gui(int argc, char *argv[]){
 	gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->selecionador->box, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(janela);
-
-	//Testando a função de colorir
-	/*printf("colore: %d\n",
-		gui_colore_vertice(
-			NULL,
-			gui_colore_dados_novo(-1, 7, 5, 9)
-		)
-	);
-
-	printf("colore: %d\n",
-		gui_colore_vertice(
-			NULL,
-			gui_colore_dados_novo(-1, 7, 2, 9)
-		)
-	);*/
 
 	gtk_main();
 	

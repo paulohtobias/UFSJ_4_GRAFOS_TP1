@@ -1,4 +1,4 @@
-#include "heuristica.h"
+#include "backtracking.h"
 
 //Matriz com as possibilidades de cores de cada vértice.
 //Cada linha i corresponde ao id vértice i
@@ -6,28 +6,11 @@
 //A posição [i][0] indica quantas cores o vértice i pode assumir.
 int **possibilidades;
 
-void heuristica_pht_colore(Grafo *grafo, int id, int cor){
-    if(grafo_colore_vertice(grafo, id, cor) == true){
-        possibilidades[id][0] = 0;
-        int v;
-        for(v=0; v<grafo->n; v++){
-            if(grafo->cor[v] == 0){
-                if(grafo_existe_aresta_nd(grafo, id, v)){
-                    if(possibilidades[v][cor] == 1){
-                        possibilidades[v][cor] = 0;
-                        possibilidades[v][0]--;
-                    }
-                }
-            }
-        }
-    }
-}
-
-void heuristica_pht(Sudoku *sudoku){
-    int i, j;
-
-    int n = sudoku->grafo->n;
-    //Iniciando a matriz.
+//Inicializa a mtriz de possibilidades.
+void inicializa_possibilidades(Sudoku *sudoku){
+	int i, j;
+	int n = sudoku->grafo->n;
+	//Iniciando a matriz.
     possibilidades = vetor2d(n, sudoku->dimensao + 1);
     for(i=0; i<n; i++){
         possibilidades[i][0] = sudoku->dimensao;
@@ -57,51 +40,53 @@ void heuristica_pht(Sudoku *sudoku){
             }
         }
     }
+}
 
-    //printP(n, sudoku->dimensao);
-    printS(sudoku);
-    getchar();
+//Tenta colorir um vértice. Se conseguir, então a matriz de
+//possibilidades é atualizada.
+void exato_colore(Grafo *grafo, int id, int cor){
+	int dimensao = raiz_quadrado_perfeito(grafo->n);
+    if(grafo_colore_vertice(grafo, id, cor) == true){
+        int v;
+		for(v=0; v<=dimensao; v++){
+			possibilidades[id][v] = 0;
+		}
 
-    //variáveis responsáveis pela contagem de tempo de usuário e sistema.
-	double tempoU,tempoS;
-	struct rusage resources;
-	struct timeval inicioU, inicioS, fimU, fimS;
+        for(v=0; v<grafo->n; v++){
+            if(grafo->cor[v] == 0){
+                if(grafo_existe_aresta_nd(grafo, id, v)){
+                    if(possibilidades[v][cor] == 1){
+                        possibilidades[v][cor] = 0;
+                        possibilidades[v][0]--;
+                    }
+                }
+            }
+        }
+    }
+}
 
-    //Inicia a contagem de tempo do usuario e sistema.
-    getrusage(RUSAGE_SELF, &resources);
-    inicioU = resources.ru_utime;
-    inicioS = resources.ru_stime;
-    
-    int coloriu;
+//Função principal.
+void algoritmo_exato(Sudoku *sudoku){
+	inicializa_possibilidades(sudoku);
+
+    int coloriu = 0;
     while(!sfim(sudoku->grafo)){
         coloriu = 0;
         
-        //coloriu+= heuristica_vertice(sudoku);
-        coloriu+= heuristica_hiper_aresta(sudoku);
-        
-        /*if(coloriu > 0){
-            printP(n, sudoku->dimensao);
-            printS(sudoku);
-            getchar();
-        }*/
+        coloriu+= poda_vertice(sudoku);
+        coloriu+= poda_hiper_aresta(sudoku);
+
+        if(coloriu==0){
+            printf("BACKTRACKING: ");
+            backtracking(sudoku);
+        }
     }
-    // Finaliza a contagem de tempo do usuario e sistema.
-    getrusage(RUSAGE_SELF, &resources);
-    fimU = resources.ru_utime;
-    fimS = resources.ru_stime;
 
-    // Calcula o tempo do usuario.
-    tempoU = (double) (fimU.tv_sec - inicioU.tv_sec) + 1.e-6 * (double) (fimU.tv_usec - inicioU.tv_usec);
-    // Calcula o tempo do sistema.
-    tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
-
-    printf("Tempo de usuário: %.9f\n",tempoU);
-	printf("Tempo de sistema: %.9f\n",tempoS);
-
-    printS(sudoku);
+	printf("Deu certo!\n");
 }
 
-int heuristica_vertice(Sudoku *sudoku){
+//Funções de poda. Podem resolver o sudoku.
+int poda_vertice(Sudoku *sudoku){
     int i;
     int n = sudoku->grafo->n;
 
@@ -111,7 +96,7 @@ int heuristica_vertice(Sudoku *sudoku){
             int cor;
             for(cor=1; cor<=sudoku->dimensao; cor++){
                 if(possibilidades[i][cor] == 1){
-                    heuristica_pht_colore(sudoku->grafo, i, cor);
+                    exato_colore(sudoku->grafo, i, cor);
                     coloriu = 1;
                 }
             }
@@ -119,9 +104,7 @@ int heuristica_vertice(Sudoku *sudoku){
     }
     return coloriu;
 }
-
-
-int heuristica_hiper_aresta(Sudoku *sudoku){
+int poda_hiper_aresta(Sudoku *sudoku){
     int c, i;
     No *temp;
     int n = sudoku->grafo->n;
@@ -144,49 +127,51 @@ int heuristica_hiper_aresta(Sudoku *sudoku){
                 }
             }
             if(total == 1){
-                heuristica_pht_colore(sudoku->grafo, id, c);
+                exato_colore(sudoku->grafo, id, c);
                 coloriu = 1;
-
-                //printP(n, sudoku->dimensao);
-                //printS(sudoku);
-                //getchar();
             }
         }
     }
     return coloriu;
 }
 
-void printP(int n, int d){
-    int i, j;
-    for(i=0; i<n; i++){
-        printf("%2d: ", i);
-        for(j=0; j<=d; j++){
-            printf("%d|", possibilidades[i][j]);
-        }
-        printf("\n");
-    }
+//Funções de tentativa e erro.
+void define_estaticos(int *vetor_combinacao, Grafo *grafo){
+	int i;
+	for( i = 0; i < grafo->n; i++){
+		if(grafo->cor[i] > 0){
+			vetor_combinacao[i] = estatico;
+		}
+	}
 }
+bool backtracking(Sudoku *sudoku){
+	int k = 0;
+	int *vetor_combinacao = vetor1d(sudoku->grafo->n);
+	define_estaticos(vetor_combinacao, sudoku->grafo);
 
-void printS(Sudoku *sudoku){
-    int i, j;
-    int d, l, a;
-    d = sudoku->dimensao;
-    l = sudoku->largura;
-    a = sudoku->altura;
-
-    for(i=0; i<d; i++){
-        if(i%a == 0){
-            printf("\n");
-        }
-        for(j=0; j<d; j++){
-            int id = sudoku_lc_para_vertice_id(d, i, j);
-            if(j%l == 0){
-                printf("|");
-            }
-            printf("%3d ", sudoku->grafo->cor[id]);
-        }
-        printf("\n");
-    }
+	while(vetor_combinacao[0] <= sudoku->dimensao && k < sudoku->grafo->n){
+		if(vetor_combinacao[k] == estatico){
+			k++;
+		}else{
+			vetor_combinacao[k]++;
+			while(possibilidades[k][vetor_combinacao[k]] == 0){
+				vetor_combinacao[k]++;
+			}
+			if(vetor_combinacao[0] > sudoku->dimensao){
+				return false;
+			}else if(vetor_combinacao[k] > sudoku->dimensao){
+				vetor_combinacao[k] = 0;
+				grafo_colore_vertice(sudoku->grafo, k, 0);
+				k--;
+				while(k>0 && vetor_combinacao[k] == estatico){
+					k--;
+				}
+			}else if(grafo_colore_vertice(sudoku->grafo, k, vetor_combinacao[k])){
+				k++;
+			}
+		}
+	}
+	return true;
 }
 
 int sfim(Grafo *g){
@@ -207,4 +192,35 @@ int sfim(Grafo *g){
         }
     }
     return 1;
+}
+void printP(int n, int d){
+    int i, j;
+    for(i=0; i<n; i++){
+        printf("%2d: ", i);
+        for(j=0; j<=d; j++){
+            printf("%d|", possibilidades[i][j]);
+        }
+        printf("\n");
+    }
+}
+void printS(Sudoku *sudoku){
+    int i, j;
+    int d, l, a;
+    d = sudoku->dimensao;
+    l = sudoku->largura;
+    a = sudoku->altura;
+
+    for(i=0; i<d; i++){
+        if(i%a == 0){
+            printf("\n");
+        }
+        for(j=0; j<d; j++){
+            int id = sudoku_lc_para_vertice_id(d, i, j);
+            if(j%l == 0){
+                printf("|");
+            }
+            printf("%3d ", sudoku->grafo->cor[id]);
+        }
+        printf("\n");
+    }
 }

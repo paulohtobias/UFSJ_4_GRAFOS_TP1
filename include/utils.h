@@ -11,6 +11,9 @@ int *vetor1d(int d1);
 //Cria uma matriz d1 x d2 e a preenche com 0.
 int **vetor2d(int d1, int d2);
 
+//Substring
+char *substring(char *str, int inicio, int fim);
+
 //Sub vetor
 int *sub_vetor(int *vetor, int inicio, int fim);
 
