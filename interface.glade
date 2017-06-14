@@ -34,12 +34,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="Lado_direito">
+          <object class="GtkBox" id="lado_direito">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkButton" id="ButtonGeraSudoku">
+              <object class="GtkButton" id="btn_novo_sudoku">
                 <property name="label" translatable="yes">Criar</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -52,7 +52,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="ButtonExato">
+              <object class="GtkButton" id="btn_exato">
                 <property name="label" translatable="yes">Solução Exata</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -65,7 +65,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="ButtonHeuristica">
+              <object class="GtkButton" id="btn_heuristica">
                 <property name="label" translatable="yes">Heuristica</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

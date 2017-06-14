@@ -3,6 +3,7 @@
 
 #include <gtk/gtk.h>
 #include "backtracking.h"
+#include "dsatur.h"
 
 ///Principais
 typedef struct{

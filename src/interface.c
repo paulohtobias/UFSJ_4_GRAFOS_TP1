@@ -286,11 +286,17 @@ int gui(int argc, char *argv[]){
 
     g_signal_connect(G_OBJECT(janela), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    //Conectando os botões dos algoritmos.
-    GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "ButtonExato"));
+    ///Conectando os botões dos algoritmos.
+    //Exato
+    GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "btn_exato"));
     gui_preenche_dados dado_exato;
     dado_exato.algoritmo = algoritmo_exato;
     g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_exato);
+    //Heurística
+    GtkWidget *btn_heuristica = GTK_WIDGET(gtk_builder_get_object(builder, "btn_heuristica"));
+    gui_preenche_dados dado_heuristica;
+    dado_heuristica.algoritmo = dsatur;
+    g_signal_connect(G_OBJECT(btn_heuristica), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_heuristica);
 
     GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(builder, "lado_esquerdo"));
 

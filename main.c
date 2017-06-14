@@ -9,6 +9,7 @@ int main(int argc , char *argv[]){
 	sudoku_coloracao_string(sudoku1, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");
 	dsatur(sudoku1);
 	printS(sudoku1);
+    return 0;
 
 	/**
 	int i = 0, l = INF;
