@@ -2,8 +2,6 @@
 #define INTERFACE_H
 
 #include <gtk/gtk.h>
-#include "grafo.h"
-#include "sudoku.h"
 #include "backtracking.h"
 
 ///Principais
@@ -20,23 +18,29 @@ typedef struct{
 	gui_selecionador* selecionador;
 }gui_sudoku;
 
-///Gera os sinais para os botões
-void gui_define_sinal_para_button();
-
 //Cria o Sudoku.
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku);
 
 //Cria um grid.
 GtkWidget *gui_cria_grid( int *ids, int *cor);
 
-///Pega a linha e a coluna do botão correspondente
-void get_lc_botao(GtkButton *button, int *linha, int *coluna);
+///Gera os sinais para os botões do grid.
+//Quando clicado, o botão do grid será colorido (se possível) com a
+//cor selecionada usando os botões do selecionador.
+void gui_sudoku_button_signal_connect();
 
-//Cria um bloco que seleciona um número para inserir no sudoku 
+///Define o valor a ser inserido no sudoku.
+void define_valor_a_inserir(GtkButton *button, gpointer data);
+
+///Função chamada quando um botão do Sudoku é clicado.
+//Altera o label dos botões do sudoku.
+void gui_sudoku_button_clicked(GtkButton *button, gpointer data);
+
+///Pega a linha e a coluna do botão correspondente do grid.
+void gui_sudoku_botao_get_lc(GtkButton *button, int *linha, int *coluna);
+
+//Cria uma caixa de botões que seleciona um número para inserir no sudoku.
 gui_selecionador* gui_cria_selecionador(int altura, int largura);
-
-///Altera os labels dos botões acessíveis
-void gui_button_signal(GtkButton *button, gpointer data);
 
 ///Coloração
 typedef struct{
