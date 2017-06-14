@@ -52,8 +52,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="ButtonBacktracking">
-                <property name="label" translatable="yes">Backtracking</property>
+              <object class="GtkButton" id="ButtonExato">
+                <property name="label" translatable="yes">Solução Exata</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

@@ -2,18 +2,9 @@
 #include "interface.h"
 
 int main(int argc , char *argv[]){
-	
-	//Sudoku *sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
-	//heuristica_pht(sudoku);
+	gui(argc, argv); return 0;
 
-	//gui(argc, argv, sudoku); return 0;
-	
 	/**
-	heuristica_pht(sudoku);
-	return 0;
-	/**/
-
-	/**/
 	int i = 0, l = INF;
 	FILE *in = fopen("testes/9.txt", "r");
 	char coloracao[100];

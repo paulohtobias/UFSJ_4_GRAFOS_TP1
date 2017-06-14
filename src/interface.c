@@ -10,7 +10,7 @@ void get_lc_botao(GtkButton *button, int *linha, int *coluna){
 	int i, j;
 	*linha = -1;
 	*coluna= -1;
-	int dimensao = gsudoku->sudoku->altura*gsudoku->sudoku->largura;
+	int dimensao = gsudoku->sudoku->dimensao;
 	for(i = 0; i < dimensao; i++){
 		for(j = 0; j < dimensao; j++){
 			if(button == GTK_BUTTON(gsudoku->button[i][j])){
@@ -239,21 +239,24 @@ void gui_container_esvazia(GtkWidget *container){
 }
 
 int gui(int argc, char *argv[]){
-	GtkBuilder *gtkBuilder;
+	GtkBuilder *builder;
 	GtkWidget *janela;
 
-	//Sudoku *sudoku = novo_Sudoku("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
-	Sudoku *sudoku;
+	Sudoku *sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000",3,3);
 
 	gtk_init(&argc, &argv);
 	
-	gtkBuilder = gtk_builder_new_from_file("interface.glade");
+	builder = gtk_builder_new_from_file("interface.glade");
 
-	janela = GTK_WIDGET(gtk_builder_get_object(gtkBuilder,"janela_principal"));
+	janela = GTK_WIDGET(gtk_builder_get_object(builder,"janela_principal"));
 
 	g_signal_connect(G_OBJECT(janela), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-	GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(gtkBuilder,"lado_esquerdo"));
+	//Conectando os botões dos algoritmos.
+	GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "ButtonExato"));
+	//g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)algoritmo_exato);
+
+	GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(builder,"lado_esquerdo"));
 	
 	gsudoku = gui_cria_sudoku(sudoku);
 	gui_define_sinal_para_button();
