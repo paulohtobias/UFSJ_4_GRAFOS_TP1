@@ -58,8 +58,21 @@ Sudoku *novo_Sudoku_de_arquivo(char *arquivo){
     if(in == NULL){
         return NULL;
     }
+    
+    int altura, largura;
+    fscanf(in, "%d %d\n", &altura, &largura);
+    
+    Sudoku *sudoku = novo_Sudoku(altura, largura);
+    
+    int i;
+    for(i=0; i<sudoku->grafo->n; i++){
+        int c;
+        fscanf(in, "%d", &c);
+        sudoku->grafo->cor[i] = c;
+    }
+    fclose(in);
 
-    return NULL;
+    return sudoku;
 }
 
 //Gera coloração inicial para um Sudoku a partir de uma string.

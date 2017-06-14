@@ -3,7 +3,7 @@
 #include "interface.h"
 
 int main(int argc , char *argv[]){
-	//gui(argc, argv); return 0;
+	gui(argc, argv); return 0;
 
 	Sudoku *sudoku1 = novo_Sudoku(3, 3);
 	sudoku_coloracao_string(sudoku1, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");

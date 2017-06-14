@@ -255,6 +255,12 @@ bool gui_colore_vertice(GtkButton *vertice, gpointer data){
         char label[10];
         sprintf(label, "%d", dados->cor);
         gtk_button_set_label(GTK_BUTTON(gsudoku->button[linha][coluna]), label);
+        
+        if(dados->cor > dimensao){
+            GdkColor color;
+            gdk_color_parse ("red", &color);
+            gtk_widget_modify_fg ( gsudoku->button[linha][coluna], GTK_STATE_NORMAL, &color);
+        }
 
         return true;
     }
@@ -276,7 +282,9 @@ int gui(int argc, char *argv[]){
     GtkBuilder *builder;
     GtkWidget *janela;
 
-    Sudoku *sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000", 3, 3);
+    Sudoku *sudoku;
+    //sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000", 3, 3);
+    sudoku = novo_Sudoku_de_arquivo("testes/casos/4x4_01.txt");
 
     gtk_init(&argc, &argv);
 
