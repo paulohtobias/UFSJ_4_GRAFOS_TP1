@@ -11,7 +11,7 @@ int vertice_maior_grau_saturacao(Grafo *grafo, int *cores){
 		for(j = 0, grau = 0, saturacao = 0; j < dimensao; j++){
 			if(grafo->adj[i][j] > 0){
 				grau++;
-				if(cores[j] > 0){
+				if(cores[j] > 0){ //Cuidado pra não contar a mesma cor mais de 1x.
 					saturacao++;
 				}
 			}
