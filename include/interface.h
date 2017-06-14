@@ -24,6 +24,13 @@ gui_sudoku* gui_cria_sudoku(Sudoku *sudoku);
 //Cria um grid.
 GtkWidget *gui_cria_grid( int *ids, int *cor);
 
+///Preenche
+typedef struct{
+    void (*algoritmo)(Sudoku *sudoku);
+}gui_preenche_dados;
+//Chama uma função (exata ou heurística) para preencher o Sudoku.
+void gui_preenche(GtkButton *button, gpointer data);
+
 ///Gera os sinais para os botões do grid.
 //Quando clicado, o botão do grid será colorido (se possível) com a
 //cor selecionada usando os botões do selecionador.

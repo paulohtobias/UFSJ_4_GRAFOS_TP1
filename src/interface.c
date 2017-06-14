@@ -89,6 +89,21 @@ GtkWidget *gui_cria_grid(int *ids, int *cor){
     return vertical;
 }
 
+//Chama uma função (exata ou heurística) para preencher o Sudoku.
+void gui_preenche(GtkButton *button, gpointer data){
+    //Chamando a função para completar o Sudoku.
+    gui_preenche_dados *dado = data;
+    dado->algoritmo(gsudoku->sudoku);
+    
+    int i;
+    for(i=0; i<gsudoku->sudoku->grafo->n; i++){
+        gui_colore_vertice(
+            NULL,
+            gui_colore_dados_novo(i, -1, -1, gsudoku->sudoku->grafo->cor[i])
+        );
+    }
+}
+
 //Gera os sinais para os botões do grid.
 //Quando clicado, o botão do grid será colorido (se possível) com a
 //cor selecionada usando os botões do selecionador.
@@ -103,10 +118,10 @@ void gui_sudoku_button_signal_connect(){
             if (strcmp(gtk_button_get_label(GTK_BUTTON(gsudoku->button[i][j])), " ") == 0){ //É clicavel
                 valores_vazios++;
                 g_signal_connect(
-                    G_OBJECT(gsudoku->button[i][j]),    //Botão
-                    "clicked",                          //Sinal
-                    G_CALLBACK(gui_sudoku_button_clicked),      //Função
-                    NULL                                //Parâmetro
+                    G_OBJECT(gsudoku->button[i][j]),        //Botão
+                    "clicked",                              //Sinal
+                    G_CALLBACK(gui_sudoku_button_clicked),  //Função
+                    NULL                                    //Parâmetro
                 );
             } else{ //Não é clicavel
                 gtk_widget_set_sensitive(GTK_WIDGET(gsudoku->button[i][j]), FALSE);
@@ -273,7 +288,9 @@ int gui(int argc, char *argv[]){
 
     //Conectando os botões dos algoritmos.
     GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "ButtonExato"));
-    //g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)algoritmo_exato);
+    gui_preenche_dados dado_exato;
+    dado_exato.algoritmo = algoritmo_exato;
+    g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_exato);
 
     GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(builder, "lado_esquerdo"));
 
