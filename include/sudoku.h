@@ -14,7 +14,7 @@ typedef struct{
 Sudoku *novo_Sudoku(int altura, int largura);
 
 //Cria um Sudoku modelado como um grafo a partir de uma string.
-Sudoku *novo_Sudoku_de_string(char *str_vertices, int altura, int largura);
+Sudoku *novo_Sudoku_de_string(const char *str_vertices, int altura, int largura);
 
 //Cria um Sudoku modelado como um grafo a partir de um arquivo.
 Sudoku *novo_Sudoku_de_arquivo(char *arquivo);
@@ -23,7 +23,7 @@ Sudoku *novo_Sudoku_de_arquivo(char *arquivo);
 void free_Sudoku(Sudoku *sudoku);
 
 //Gera coloração inicial para um Sudoku a partir de uma string.
-void sudoku_coloracao_string(Sudoku *sudoku, char *coloracao);
+void sudoku_coloracao_string(Sudoku *sudoku, const char *coloracao);
 
 //Converte uma posição do Sudoku para o id do vértice.
 int sudoku_lc_para_vertice_id(int dimensao, int linha, int coluna);

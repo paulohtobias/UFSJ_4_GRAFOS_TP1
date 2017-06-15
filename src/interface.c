@@ -24,7 +24,7 @@ void gui_novo_Sudoku(GtkButton *button, gpointer window){
     Sudoku *sudoku;
     
     GtkWidget *txt_cores = GTK_WIDGET(gtk_builder_get_object(builder, "cores_texto"));
-    char *text = gtk_entry_get_text(GTK_ENTRY(txt_cores));
+    const char *text = gtk_entry_get_text(GTK_ENTRY(txt_cores));
     if(strlen(text) > 0){
         int altura, largura;
         altura = atoi(gtk_entry_get_text(GTK_ENTRY(GTK_WIDGET(gtk_builder_get_object(builder, "txt_altura")))));
@@ -342,10 +342,6 @@ void gui_container_esvazia(GtkWidget *container){
 
 int gui(int argc, char *argv[]){
     GtkWidget *janela;
-
-    Sudoku *sudoku;
-    //sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000", 3, 3);
-    //sudoku = novo_Sudoku_de_arquivo("testes/casos/4x4_01.txt");
 
     gtk_init(&argc, &argv);
 
