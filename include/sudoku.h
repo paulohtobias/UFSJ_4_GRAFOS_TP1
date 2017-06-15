@@ -19,6 +19,9 @@ Sudoku *novo_Sudoku_de_string(char *str_vertices, int altura, int largura);
 //Cria um Sudoku modelado como um grafo a partir de um arquivo.
 Sudoku *novo_Sudoku_de_arquivo(char *arquivo);
 
+//Libera o Sudoku da memória.
+void free_Sudoku(Sudoku *sudoku);
+
 //Gera coloração inicial para um Sudoku a partir de uma string.
 void sudoku_coloracao_string(Sudoku *sudoku, char *coloracao);
 

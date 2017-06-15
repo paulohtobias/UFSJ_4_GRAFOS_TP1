@@ -75,6 +75,12 @@ Sudoku *novo_Sudoku_de_arquivo(char *arquivo){
     return sudoku;
 }
 
+//Libera o Sudoku da memória.
+void free_Sudoku(Sudoku *sudoku){
+    free_Grafo(sudoku->grafo);
+    free(sudoku);
+}
+
 //Gera coloração inicial para um Sudoku a partir de uma string.
 void sudoku_coloracao_string(Sudoku *sudoku, char *coloracao){
     int i;

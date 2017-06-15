@@ -1,11 +1,73 @@
 #include <gtk/gtk.h>
 #include "interface.h"
 
+GtkBuilder *builder;
+
 int valores_vazios;
 int valor_a_inserir;
-gui_sudoku *gsudoku;
+gui_sudoku *gsudoku = NULL;
 
 ///Principal
+//Cria um novo Sudoku a partir do botão "Criar"
+void gui_novo_Sudoku(GtkButton *button, gpointer window){
+    
+    GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(builder, "lado_esquerdo"));
+    if(gsudoku != NULL){
+        free_Sudoku(gsudoku->sudoku);
+        gui_container_esvazia(lado_esquerdo);
+        gui_container_esvazia(gsudoku->box);
+        gui_container_esvazia(gsudoku->selecionador->box);
+        free(gsudoku);
+        gsudoku = NULL;
+    }
+    
+    Sudoku *sudoku;
+    
+    GtkWidget *txt_cores = GTK_WIDGET(gtk_builder_get_object(builder, "cores_texto"));
+    char *text = gtk_entry_get_text(GTK_ENTRY(txt_cores));
+    if(strlen(text) > 0){
+        int altura, largura;
+        altura = atoi(gtk_entry_get_text(GTK_ENTRY(GTK_WIDGET(gtk_builder_get_object(builder, "txt_altura")))));
+        largura = atoi(gtk_entry_get_text(GTK_ENTRY(GTK_WIDGET(gtk_builder_get_object(builder, "txt_largura")))));
+        
+        sudoku = novo_Sudoku_de_string(text, altura, largura);
+    }else{
+        GtkWidget *dialog;
+        GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+        gint res;
+
+        dialog = gtk_file_chooser_dialog_new("Abrir Arquivo",
+                                             GTK_WINDOW(window),
+                                             action,
+                                             "Cancelar",
+                                             GTK_RESPONSE_CANCEL,
+                                             "Abrir",
+                                             GTK_RESPONSE_ACCEPT,
+                                             NULL);
+        
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), "./testes");
+
+        res = gtk_dialog_run(GTK_DIALOG(dialog));
+        if(res == GTK_RESPONSE_ACCEPT){
+            char *filename;
+            GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+            filename = gtk_file_chooser_get_filename(chooser);
+            sudoku = novo_Sudoku_de_arquivo(filename);
+            free(filename);
+        }
+
+        gtk_widget_destroy(dialog);
+    }
+    
+    gsudoku = gui_cria_sudoku(sudoku);
+    gui_sudoku_button_signal_connect();
+
+    gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->box, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->selecionador->box, FALSE, FALSE, 0);
+
+    gtk_widget_show_all(window);
+}
+
 //Cria o Sudoku.
 gui_sudoku* gui_cria_sudoku(Sudoku *sudoku){
     int i, j;
@@ -279,12 +341,11 @@ void gui_container_esvazia(GtkWidget *container){
 }
 
 int gui(int argc, char *argv[]){
-    GtkBuilder *builder;
     GtkWidget *janela;
 
     Sudoku *sudoku;
     //sudoku = novo_Sudoku_de_string("000000010400000000020000000000050407008000300001090000300400200050100000000806000", 3, 3);
-    sudoku = novo_Sudoku_de_arquivo("testes/casos/4x4_01.txt");
+    //sudoku = novo_Sudoku_de_arquivo("testes/casos/4x4_01.txt");
 
     gtk_init(&argc, &argv);
 
@@ -293,6 +354,10 @@ int gui(int argc, char *argv[]){
     janela = GTK_WIDGET(gtk_builder_get_object(builder, "janela_principal"));
 
     g_signal_connect(G_OBJECT(janela), "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    
+    ///Conectando o botão de criar grafo.
+    GtkWidget *btn_criar = GTK_WIDGET(gtk_builder_get_object(builder, "btn_novo_sudoku"));
+    g_signal_connect(G_OBJECT(btn_criar), "clicked", G_CALLBACK(gui_novo_Sudoku), (void*)janela);
 
     ///Conectando os botões dos algoritmos.
     //Exato
@@ -306,16 +371,7 @@ int gui(int argc, char *argv[]){
     dado_heuristica.algoritmo = dsatur;
     g_signal_connect(G_OBJECT(btn_heuristica), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_heuristica);
 
-    GtkWidget *lado_esquerdo = GTK_WIDGET(gtk_builder_get_object(builder, "lado_esquerdo"));
-
-    gsudoku = gui_cria_sudoku(sudoku);
-    gui_sudoku_button_signal_connect();
-
-    gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->box, TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(lado_esquerdo), gsudoku->selecionador->box, FALSE, FALSE, 0);
-
     gtk_widget_show_all(janela);
-
     gtk_main();
 
     return 0;

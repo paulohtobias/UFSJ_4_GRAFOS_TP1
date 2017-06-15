@@ -6,6 +6,9 @@
 #include "dsatur.h"
 
 ///Principais
+//Cria um novo Sudoku a partir do botão "Criar"
+void gui_novo_Sudoku(GtkButton *button, gpointer data);
+
 typedef struct{
 	GtkWidget *box;
 	GtkWidget **button;

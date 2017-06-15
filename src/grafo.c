@@ -25,6 +25,8 @@ void free_Grafo(Grafo *grafo){
         free(grafo->adj[i]);
     }
     free(grafo->adj);
+    
+    free_Lista(grafo->hiper_arestas, free);
 
     free(grafo);
 }
