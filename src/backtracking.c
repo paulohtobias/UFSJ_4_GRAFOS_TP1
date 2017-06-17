@@ -76,9 +76,14 @@ void algoritmo_exato(Sudoku *sudoku){
         coloriu+= poda_vertice(sudoku);
         coloriu+= poda_hiper_aresta(sudoku);
 
-        if(coloriu==0){
+        if(coloriu == 0){
             printf("BACKTRACKING: ");
-            backtracking(sudoku);
+
+            coloriu = backtracking(sudoku);
+            if(coloriu == 0){
+                printf("Sem solução!\n");
+                return;
+            }
         }
     }
 
@@ -146,10 +151,13 @@ void define_estaticos(int *vetor_combinacao, Grafo *grafo){
 }
 bool backtracking(Sudoku *sudoku){
 	int k = 0;
+    int menor_id_livre;
 	int *vetor_combinacao = vetor1d(sudoku->grafo->n);
 	define_estaticos(vetor_combinacao, sudoku->grafo);
 
-	while(vetor_combinacao[0] <= sudoku->dimensao && k < sudoku->grafo->n){
+    for(menor_id_livre=0; menor_id_livre<sudoku->grafo->n && vetor_combinacao[menor_id_livre] == estatico; menor_id_livre++){}
+
+	while(vetor_combinacao[menor_id_livre] <= sudoku->dimensao && k < sudoku->grafo->n){
 		if(vetor_combinacao[k] == estatico){
 			k++;
 		}else{
@@ -157,7 +165,7 @@ bool backtracking(Sudoku *sudoku){
 			while(possibilidades[k][vetor_combinacao[k]] == 0){
 				vetor_combinacao[k]++;
 			}
-			if(vetor_combinacao[0] > sudoku->dimensao){
+			if(vetor_combinacao[menor_id_livre] > sudoku->dimensao){
 				return false;
 			}else if(vetor_combinacao[k] > sudoku->dimensao){
 				vetor_combinacao[k] = 0;

@@ -5,11 +5,17 @@
 int main(int argc , char *argv[]){
 	gui(argc, argv); return 0;
 
+	Sudoku *sudoku = novo_Sudoku_de_arquivo("testes/casos/3x5_03.txt");
+	algoritmo_exato(sudoku);
+	return 0;
+
+	/**
 	Sudoku *sudoku1 = novo_Sudoku(3, 3);
 	sudoku_coloracao_string(sudoku1, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");
 	dsatur(sudoku1);
 	printS(sudoku1);
     return 0;
+	/**/
 
 	/**
 	int i = 0, l = INF;
