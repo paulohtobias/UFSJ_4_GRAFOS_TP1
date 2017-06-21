@@ -30,7 +30,7 @@ int main(int argc , char *argv[]){
     inicioU = resources.ru_utime;
     inicioS = resources.ru_stime;
 
-	int i = 0, l = 24575;
+	int i = 0, l = 1;
 	FILE *in = fopen("testes/9.txt", "r");
 	char coloracao[100];
 	Sudoku *sudoku1 = novo_Sudoku(3, 3);
@@ -48,18 +48,28 @@ int main(int argc , char *argv[]){
     fimU = resources.ru_utime;
     fimS = resources.ru_stime;
 
-	printf("backtraking; %d\n");
+	// Calcula o tempo do usuario.
+    tempoU = (double) (fimU.tv_sec - inicioU.tv_sec) + 1.e-6 * (double) (fimU.tv_usec - inicioU.tv_usec);
+    // Calcula o tempo do sistema.
+    tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
+
+	printf("backtraking;");
+    printf("%.9f;",tempoU);
+    printf("%.9f\n",tempoS);
+
 
 	//Inicia a contagem de tempo do usuario e sistema.
+
+	printf("heuristica;");
     getrusage(RUSAGE_SELF, &resources);
 
     inicioU = resources.ru_utime;
     inicioS = resources.ru_stime;
 
-	int i = 0, l = 24575;
-	FILE *in = fopen("testes/9.txt", "r");
-	char coloracao[100];
-	Sudoku *sudoku1 = novo_Sudoku(3, 3);
+	i = 0;
+	l = 1;
+	in = fopen("testes/9.txt", "r");
+	sudoku1 = novo_Sudoku(3, 3);
 	while(i<l && !feof(in)){
 		fscanf(in, "%s\n", coloracao);
 		if(i<l){
@@ -74,7 +84,13 @@ int main(int argc , char *argv[]){
     fimU = resources.ru_utime;
     fimS = resources.ru_stime;
 
-	printf("heuristica; %d\n");
+	// Calcula o tempo do usuario.
+    tempoU = (double) (fimU.tv_sec - inicioU.tv_sec) + 1.e-6 * (double) (fimU.tv_usec - inicioU.tv_usec);
+    // Calcula o tempo do sistema.
+    tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
+
+    printf("%.9f;",tempoU);
+    printf("%.9f\n",tempoS);
 
 	return 0;
 	/**/

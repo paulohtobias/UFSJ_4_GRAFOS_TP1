@@ -91,5 +91,5 @@ void dsatur(Sudoku *sudoku){
 		}
 	}
 	for(i=sudoku->dimensao; vertices_cores[i] > 0; i++){}
-	printf("maior_cor: %d\npassou_quanto: %d",i,quantidade_passou);
+	printf("%d;%d;",i,quantidade_passou);
 }
