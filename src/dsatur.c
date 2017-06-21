@@ -57,6 +57,7 @@ int define_cores_iniciais(Grafo *grafo, int *vertices_cores){
 
 void dsatur(Sudoku *sudoku){
 	int i;
+	int quantidade_passou = 0;
 	int n = sudoku->grafo->n;
 
 	int *vertices_cores = vetor1d(n); ///Vetor que armazena as cores já usadas
@@ -68,6 +69,9 @@ void dsatur(Sudoku *sudoku){
 		for(i = 1; i <= n; i++){
 			///Se for possível colorí-lo com alguma das cores
 			if(vertices_cores[i-1] != sem_cor && grafo_colore_vertice(sudoku->grafo, vertice, i)){
+				if(i > sudoku->dimensao){
+					quantidade_passou++;
+				}
 				posicoes_restantes--;
 				break;
 			}
@@ -86,4 +90,6 @@ void dsatur(Sudoku *sudoku){
 			}
 		}
 	}
+	for(i=sudoku->dimensao; vertices_cores[i] > 0; i++){}
+	printf("maior_cor: %d\npassou_quanto: %d",i,quantidade_passou);
 }

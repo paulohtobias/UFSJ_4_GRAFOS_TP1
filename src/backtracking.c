@@ -77,17 +77,17 @@ void algoritmo_exato(Sudoku *sudoku){
         coloriu+= poda_hiper_aresta(sudoku);
 
         if(coloriu == 0){
-            printf("BACKTRACKING: ");
+            //printf("BACKTRACKING: ");
 
             coloriu = backtracking(sudoku);
             if(coloriu == 0){
-                printf("Sem solução!\n");
+                //printf("Sem solução!\n");
                 return;
             }
         }
     }
 
-	printf("Deu certo!\n");
+	//printf("Deu certo!\n");
 }
 
 //Funções de poda. Podem resolver o sudoku.
