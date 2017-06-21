@@ -30,7 +30,7 @@ int main(int argc , char *argv[]){
     inicioU = resources.ru_utime;
     inicioS = resources.ru_stime;
 
-	int i = 0, l = 1;
+	int i = 0, l = 24575;
 	FILE *in = fopen("testes/9.txt", "r");
 	char coloracao[100];
 	Sudoku *sudoku1 = novo_Sudoku(3, 3);
@@ -67,7 +67,7 @@ int main(int argc , char *argv[]){
     inicioS = resources.ru_stime;
 
 	i = 0;
-	l = 1;
+	l =  24575;
 	in = fopen("testes/9.txt", "r");
 	sudoku1 = novo_Sudoku(3, 3);
 	while(i<l && !feof(in)){
