@@ -23,11 +23,11 @@ COMPILE = $(CC) $(CFLAGS) $(INCLUDE_PATHS)
 #---------------Include---------------#
 INCS = $(wildcard $(IDIR)/*.h)
 #---------------Source----------------#
-SRCS = $(INCS:$(IDIR)/%.h=$(SDIR)/%.c)
+SRCS = $(wildcard $(SDIR)/*.c)
 #---------------Object----------------#
-OBJS = $(INCS:$(IDIR)/%.h=$(ODIR)/%.o)
+OBJS = $(SRCS:$(SDIR)/%.c=$(ODIR)/%.o)
 #-------------Dependency--------------#
-DEPS = $(INCS:$(IDIR)/%.h=$(ODIR)/%.d)
+DEPS = $(SRCS:$(SDIR)/%.c=$(ODIR)/%.d)
 
 all: $(OBJS)
 	$(COMPILE) $(OBJS) main.c -o $(BIN) $(LIBS)
