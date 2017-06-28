@@ -1,19 +1,18 @@
 #include "grafo.h"
 
 //Cria um novo grafo vazio com n vértices.
-Grafo *novo_Grafo(int n){
+Grafo *novo_Grafo(int n, int qtd_hiper_arestas, int tam_hiper_arestas, int hiper_aresta_por_vertice){
     Grafo *grafo = malloc(sizeof(Grafo));
 
     grafo->n = n;
     grafo->m = 0;
-
-    grafo->adj = vetor2d(n, n);
-
-    //Preenchendo o grafo com infinito em todas as arestas.
-
+    grafo->qtd_hiper_arestas = qtd_hiper_arestas;
+    grafo->tam_hiper_arestas = tam_hiper_arestas;
+    grafo->hiper_arestas_por_vertice = hiper_aresta_por_vertice;
+    
+    grafo->pos_hiper_aresta = vetor2d(n, hiper_aresta_por_vertice);
+    grafo->hiper_aresta = vetor2d(qtd_hiper_arestas, tam_hiper_arestas);
     grafo->cor = vetor1d(n);
-
-    grafo->hiper_arestas = nova_Lista("hiper aresta");
 
     return grafo;
 }
@@ -22,63 +21,28 @@ Grafo *novo_Grafo(int n){
 void free_Grafo(Grafo *grafo){
     int i;
     for(i=0; i<grafo->n; i++){
-        free(grafo->adj[i]);
+        free(grafo->pos_hiper_aresta[i]);
     }
-    free(grafo->adj);
+    free(grafo->pos_hiper_aresta);
     
-    free_Lista(grafo->hiper_arestas, free);
-
+    for(i=0; i<grafo->qtd_hiper_arestas; i++){
+        free(grafo->hiper_aresta[i]);
+    }
+    free(grafo->hiper_aresta);
+    
+    free(grafo->cor);
     free(grafo);
-}
-
-//Insere uma aresta não-direcionada de u para v.
-void grafo_insere_aresta_nd(Grafo *grafo, int u, int v){
-    grafo_insere_aresta_d(grafo, u, v);
-    grafo_insere_aresta_d(grafo, v, u);
-}
-//Insere uma aresta direcionada entre u e v.
-void grafo_insere_aresta_d(Grafo *grafo, int u, int v){
-    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
-        grafo->adj[u][v] = 1;
-    }
-}
-
-//Converte uma hiper-aresta para arestas do grafo.
-void grafo_hiper_aresta_para_aresta(Grafo *grafo, int *hiper_aresta){
-    int i, j;
-
-    for(i=0; i<grafo->n-1; i++){
-        if(hiper_aresta[i] == 1){
-            for(j=i+1; j<grafo->n; j++){
-                if(hiper_aresta[j] == 1){
-                    grafo_insere_aresta_nd(grafo, i, j);
-                }
-            }
-        }
-    }
-}
-
-//Remove uma aresta não-direcionada de u para v.
-void grafo_remove_aresta_nd(Grafo *grafo, int u, int v){
-    grafo_remove_aresta_nd(grafo, u, v);
-    grafo_remove_aresta_nd(grafo, v, u);
-}
-//Remove uma aresta direcionada entre u e v.
-void grafo_remove_aresta_d(Grafo *grafo, int u, int v){
-    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
-        grafo->adj[u][v] = 0;
-    }
 }
 
 //Verifica se existe aresta de u para v.
 bool grafo_existe_aresta_nd(Grafo *grafo, int u, int v){
-    return ( (grafo_existe_aresta_d(grafo, u, v)) && (grafo_existe_aresta_d(grafo, v, u)) );
-}
-//Verifica se existe aresta entre u e v.
-bool grafo_existe_aresta_d(Grafo *grafo, int u, int v){
-    if((u >= 0 && u < grafo->n) && (v >= 0 && v < grafo->n)){
-        if(grafo->adj[u][v] != 0){
-            return true;
+    int i, j;
+    for(i=0; i<grafo->hiper_arestas_por_vertice; i++){
+        int hiper_aresta = grafo->pos_hiper_aresta[u][i];
+        for(j=0; j<grafo->tam_hiper_arestas; j++){
+            if(grafo->hiper_aresta[hiper_aresta][j] == v){
+                return true;
+            }
         }
     }
     return false;
@@ -93,10 +57,18 @@ bool grafo_colore_vertice(Grafo *grafo, int v, int cor){
 
     if(cor > 0){
         //Verifica se algum vértice adjacete à v já possui a mesma cor.
-        int u;
-        for(u=0; u<grafo->n; u++){
-            if(grafo_existe_aresta_nd(grafo, v, u) && grafo->cor[u] == cor){
-                return false;
+        int i, j;
+        for(i=0; i<grafo->hiper_arestas_por_vertice; i++){
+            //Número da hiper-aresta.
+            int pos = grafo->pos_hiper_aresta[v][i];
+            
+            for(j=0; j<grafo->tam_hiper_arestas; j++){
+                //Vértice adjacente à v.
+                int u = grafo->hiper_aresta[pos][j];
+                
+                if(grafo->cor[u] == cor){
+                    return false;
+                }
             }
         }
     }
@@ -106,23 +78,23 @@ bool grafo_colore_vertice(Grafo *grafo, int v, int cor){
     return true;
 }
 
-//Mostra o grafo na tela.
+//Exibe o grafo na tela.
 void grafo_mostra(Grafo *grafo){
     int i, j;
-
-	printf("|  id |");
-	for(i=0; i<grafo->n; i++)
-		printf("| %3d |", i);
-	printf("\n");
-	//Mostrando o conteudo do grafo.
-	for(i=0; i<grafo->n; i++){
-		printf("| %3d |", i);
-		for(j=0; j<grafo->n; j++){
-			if(grafo->adj[i][j] == INF)
-				printf("| INF |");
-            else if(grafo->adj[i][j] < INF)
-				printf("|%5d|", grafo->adj[i][j]);
-		}
-		printf("\n");
-	}
+    
+    for(i=0; i<grafo->n; i++){
+        printf("%2d: %2d", i, grafo->pos_hiper_aresta[i][0]);
+        for(j=1; j<grafo->hiper_arestas_por_vertice; j++){
+            printf(", %2d", grafo->pos_hiper_aresta[i][j]);
+        }
+        printf("\n");
+    }
+    
+    for(i=0; i<grafo->qtd_hiper_arestas; i++){
+        printf("%2d: |", i);
+        for(j=0; j<grafo->tam_hiper_arestas; j++){
+            printf("%2d|", grafo->hiper_aresta[i][j]);
+        }
+        printf("\n");
+    }
 }

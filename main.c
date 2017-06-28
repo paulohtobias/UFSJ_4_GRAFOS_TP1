@@ -2,22 +2,22 @@
 #include <sys/resource.h>
 #include "dsatur.h"
 #include "backtracking.h"
-#include "interface.h"
+//#include "interface.h"
 
 int main(int argc , char *argv[]){
 	//gui(argc, argv); return 0;
 
-	/*Sudoku *sudoku = novo_Sudoku_de_arquivo("testes/casos/3x5_03.txt");
+	/*Sudoku *sudoku1 = novo_Sudoku_de_arquivo("testes/casos/3x5_03.txt");
 	return 0;*/
 
-	/*
-	Sudoku *sudoku1 = novo_Sudoku(3, 3);
-	sudoku_coloracao_string(sudoku1, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");
-	dsatur(sudoku1);
-	printS(sudoku1);
+	/**
+	Sudoku *sudoku2 = novo_Sudoku(3, 3);
+	//sudoku_coloracao_string(sudoku2, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");
+    sudoku_coloracao_string(sudoku2, "000000010400000000020000000000050407008000300001090000300400200050100000000806000");
+	algoritmo_exato(sudoku2);
+    //dsatur(sudoku2);
+	printS(sudoku2);
     return 0;
-	/**/
-
 	/**/
 
 	double tempoU,tempoS;
@@ -27,10 +27,10 @@ int main(int argc , char *argv[]){
 	int i = 0, l = 24575;
 	FILE *in = fopen("testes/9.txt", "r");
 	char coloracao[100];
-	Sudoku *sudoku1 = novo_Sudoku(3, 3);
+	Sudoku *sudoku3 = novo_Sudoku(3, 3);
 	while(i<l && !feof(in)){
 		fscanf(in, "%s\n", coloracao);
-		sudoku_coloracao_string(sudoku1, coloracao);
+		sudoku_coloracao_string(sudoku3, coloracao);
 
 		//Inicia a contagem de tempo do usuario e sistema.
 		getrusage(RUSAGE_SELF, &resources);
@@ -38,7 +38,7 @@ int main(int argc , char *argv[]){
 		inicioU = resources.ru_utime;
 		inicioS = resources.ru_stime;
 
-		algoritmo_exato(sudoku1);
+		algoritmo_exato(sudoku3);
 
 		getrusage(RUSAGE_SELF, &resources);
 
@@ -59,10 +59,10 @@ int main(int argc , char *argv[]){
 	i = 0;
 	l =  24575;
 	in = fopen("testes/9.txt", "r");
-	sudoku1 = novo_Sudoku(3, 3);
+	sudoku3 = novo_Sudoku(3, 3);
 	while(i<l && !feof(in)){
 		fscanf(in, "%s\n", coloracao);
-		sudoku_coloracao_string(sudoku1, coloracao);
+		sudoku_coloracao_string(sudoku3, coloracao);
 
 		//Inicia a contagem de tempo do usuario e sistema.
 		printf("heuristica;");
@@ -71,7 +71,7 @@ int main(int argc , char *argv[]){
 		inicioU = resources.ru_utime;
 		inicioS = resources.ru_stime;		
 
-		dsatur(sudoku1);
+		dsatur(sudoku3);
 
 		getrusage(RUSAGE_SELF, &resources);
 

@@ -12,42 +12,32 @@
 
 //Definição e operações com Grafo.
 typedef struct{
-	int n;		            //Quantidade de vértices.
-	int m;		            //Quantidade de arestas.
-	int **adj; 	            //Matriz de adjacência.
-	int *cor;				//Lista de cor de cada vertice.
-	Lista *hiper_arestas;   //Lista de hiper-arestas.
+	int n;                          //Quantidade de vértices.
+	int m;                          //Quantidade de arestas.
+    
+    int qtd_hiper_arestas;          //Quantidade de hiper-arestas.
+    int tam_hiper_arestas;          //Tamanho das hiper-arestas.
+    int hiper_arestas_por_vertice;  //Quantidade de hiper-arestas que cada vértice pertence.
+    int **pos_hiper_aresta;         //Marca quais hiper-arestas o vértice pertence.
+    int **hiper_aresta;             //Lista de hiper-arestas.
+    
+	int *cor;                       //Lista de cor de cada vertice.
 }Grafo;
 
 //Cria um novo grafo vazio com n vértices.
-Grafo *novo_Grafo(int n);
+Grafo *novo_Grafo(int n, int qtd_hiper_arestas, int tam_hiper_arestas, int vertices_por_hiper_aresta);
 
 //Libera o grafo da memória.
 void free_Grafo(Grafo *grafo);
 
-//Insere uma aresta não-direcionada de u para v.
-void grafo_insere_aresta_nd(Grafo *grafo, int u, int v);
-//Insere uma aresta direcionada entre u e v.
-void grafo_insere_aresta_d(Grafo *grafo, int u, int v);
-
-//Converte uma hiper-aresta para arestas do grafo.
-void grafo_hiper_aresta_para_aresta(Grafo *grafo, int *hiper_aresta);
-
-//Remove uma aresta não-direcionada de u para v.
-void grafo_remove_aresta_nd(Grafo *grafo, int u, int v);
-//Remove uma aresta direcionada entre u e v.
-void grafo_remove_aresta_d(Grafo *grafo, int u, int v);
-
 //Verifica se existe aresta de u para v.
 int grafo_existe_aresta_nd(Grafo *grafo, int u, int v);
-//Verifica se existe aresta entre u e v.
-int grafo_existe_aresta_d(Grafo *grafo, int u, int v);
 
 //Colore um vértice com a cor indicada.
 //Retorna true (1) se foi possível colorir e false (0) se não.
 bool grafo_colore_vertice(Grafo *grafo, int v, int cor);
 
-//Mostra o grafo na tela.
+//Exibe o grafo na tela.
 void grafo_mostra(Grafo *grafo);
 
 #endif //GRAFO_H

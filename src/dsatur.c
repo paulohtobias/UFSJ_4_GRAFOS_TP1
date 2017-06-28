@@ -16,7 +16,7 @@ int vertice_maior_grau_saturacao(Grafo *grafo){
             ///Percorre seus vizinhos
             for(j = 0; j < n; j++){
                 ///Se for o vértice não foi colorido
-                if(grafo->adj[i][j] > 0){
+                if( grafo_existe_aresta_nd(grafo, i, j) /*grafo->adj[i][j] > 0*/){
                     grau++; //Aumenta o grau do vertice
                     if(grafo->cor[j] > 0){
                         saturacao++; //Aumenta a saturação do vértice

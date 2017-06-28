@@ -36,12 +36,6 @@ int* sudoku_lc_para_quadrante_lc(int linha, int coluna, int largura, int altura)
 //                                      posição 1: coluna
 int *vertice_id_para_sudoku_lc(int dimensao, int id);
 
-//Conecta um quadrante do Sudoku.
-void sudoku_conecta_quadrantes(Sudoku *grafo);
-
-//Descrição de uma hiper-aresta do sudoku.
-char *hiper_aresta_descricao(char *format, int numero);
-
 //Retorna o id dos vértices que pertecem ao quadrante.
 int *sudoku_ids_quadrante(int altura, int largura, int x, int y);
 

@@ -7,6 +7,9 @@
 //Inicializa a mtriz de possibilidades.
 void inicializa_possibilidades(Sudoku *sudoku);
 
+//Atualiza a matriz de possibilidades quando um vértice é colorido.
+void atualiza_possibilidades(Sudoku *sudoku, int v, int cor);
+
 //Tenta colorir um vértice. Se conseguir, então a matriz de
 //possibilidades é atualizada.
 void exato_colore(Grafo *grafo, int id, int cor);
