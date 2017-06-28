@@ -12,7 +12,7 @@ void atualiza_possibilidades(Sudoku *sudoku, int v, int cor);
 
 //Tenta colorir um vértice. Se conseguir, então a matriz de
 //possibilidades é atualizada.
-void exato_colore(Grafo *grafo, int id, int cor);
+void exato_colore(Sudoku *sudoku, int id, int cor);
 
 //Função principal.
 void algoritmo_exato(Sudoku *sudoku);

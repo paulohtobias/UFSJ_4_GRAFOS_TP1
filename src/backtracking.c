@@ -54,24 +54,10 @@ void atualiza_possibilidades(Sudoku *sudoku, int v, int cor){
 
 //Tenta colorir um vértice. Se conseguir, então a matriz de
 //possibilidades é atualizada.
-void exato_colore(Grafo *grafo, int id, int cor){
-	int dimensao = raiz_quadrado_perfeito(grafo->n);
-    if(grafo_colore_vertice(grafo, id, cor) == true){
-        int v;
-		for(v=0; v<=dimensao; v++){
-			possibilidades[id][v] = 0;
-		}
-
-        for(v=0; v<grafo->n; v++){
-            if(grafo->cor[v] == 0){
-                if(grafo_existe_aresta_nd(grafo, id, v)){
-                    if(possibilidades[v][cor] == 1){
-                        possibilidades[v][cor] = 0;
-                        possibilidades[v][0]--;
-                    }
-                }
-            }
-        }
+void exato_colore(Sudoku *sudoku, int id, int cor){
+	int dimensao = raiz_quadrado_perfeito(sudoku->grafo->n);
+    if(grafo_colore_vertice(sudoku->grafo, id, cor) == true){
+        atualiza_possibilidades(sudoku, id, cor);
     }
 }
 
@@ -128,7 +114,7 @@ int poda_vertice(Sudoku *sudoku){
             int cor;
             for(cor=1; cor<=sudoku->dimensao; cor++){
                 if(possibilidades[i][cor] == 1){
-                    exato_colore(sudoku->grafo, i, cor);
+                    exato_colore(sudoku, i, cor);
                     coloriu = 1;
                 }
             }
@@ -158,7 +144,7 @@ int poda_hiper_aresta(Sudoku *sudoku){
                 }
             }
             if(total == 1){
-                exato_colore(sudoku->grafo, id, c);
+                exato_colore(sudoku, id, c);
                 
                 /**
                 printP(sudoku->grafo->n, sudoku->dimensao);
