@@ -55,6 +55,10 @@ bool grafo_colore_vertice(Grafo *grafo, int v, int cor){
         return false;
     }
 
+    if(grafo->cor[v] == cor){
+        return true;
+    }
+
     if(cor > 0){
         //Verifica se algum vértice adjacete à v já possui a mesma cor.
         int i, j;

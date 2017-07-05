@@ -18,7 +18,7 @@ Sudoku *novo_Sudoku(int altura, int largura){
 
     ///Criando as arestas.
     //Horizontal e Vertical
-    int i, j;
+    int i;
     int linha, coluna, quadrante = 0;
     for(i=0; i<n; i++){
         int *lc = vertice_id_para_sudoku_lc(dimensao, i);

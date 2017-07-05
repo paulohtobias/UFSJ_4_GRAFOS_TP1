@@ -157,13 +157,16 @@ void gui_preenche(GtkButton *button, gpointer data){
     gui_preenche_dados *dado = data;
     dado->algoritmo(gsudoku->sudoku);
     
+    printf("to aki1\n");
+
     int i;
     for(i=0; i<gsudoku->sudoku->grafo->n; i++){
+        printf("%d ", gsudoku->sudoku->grafo->cor[i]);
         gui_colore_vertice(
             NULL,
             gui_colore_dados_novo(i, -1, -1, gsudoku->sudoku->grafo->cor[i])
         );
-    }
+    }printf("\n");
 }
 
 //Gera os sinais para os botões do grid.
@@ -318,10 +321,11 @@ bool gui_colore_vertice(GtkButton *vertice, gpointer data){
         sprintf(label, "%d", dados->cor);
         gtk_button_set_label(GTK_BUTTON(gsudoku->button[linha][coluna]), label);
         
-        if(dados->cor > dimensao){
-            GdkColor color;
-            gdk_color_parse ("red", &color);
-            gtk_widget_modify_fg ( gsudoku->button[linha][coluna], GTK_STATE_NORMAL, &color);
+        if(dados->cor > dimensao){            
+            GdkRGBA invalido;
+
+            gdk_rgba_parse (&invalido, "red");
+            gtk_widget_override_color( gsudoku->button[linha][coluna], GTK_STATE_NORMAL, &invalido);
         }
 
         return true;
