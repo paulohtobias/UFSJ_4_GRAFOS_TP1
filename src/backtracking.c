@@ -90,11 +90,11 @@ void algoritmo_exato(Sudoku *sudoku){
 		/**/
 
         if(coloriu == 0){
-            printf("BACKTRACKING: ");//getchar();
+            //printf("BACKTRACKING: ");//getchar();
 
             coloriu = backtracking(sudoku);
             if(coloriu == 0){
-                printf("Sem solução!\n");
+                //printf("Sem solução!\n");
                 return;
             }
         }

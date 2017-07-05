@@ -24,11 +24,12 @@ int main(int argc , char *argv[]){
     struct rusage resources;
     struct timeval inicioU, inicioS, fimU, fimS;
 
-	int i = 0, l = 24575;
+    
+	int i, inicio = 0, l = INF;
 	FILE *in = fopen("testes/9.txt", "r");
 	char coloracao[100];
 	Sudoku *sudoku3 = novo_Sudoku(3, 3);
-	while(i<l && !feof(in)){
+	for(i=inicio;0 && i<l && !feof(in); i++){
 		fscanf(in, "%s\n", coloracao);
 		sudoku_coloracao_string(sudoku3, coloracao);
 
@@ -53,14 +54,12 @@ int main(int argc , char *argv[]){
 		printf("backtraking; 9; 0; ");
 		printf("%.9f;",tempoU);
 		printf("%.9f\n",tempoS);
-		i++;
 	}
+	fclose(in);
 
-	i = 0;
-	l =  24575;
 	in = fopen("testes/9.txt", "r");
 	sudoku3 = novo_Sudoku(3, 3);
-	while(i<l && !feof(in)){
+	for(i=inicio; i<l && !feof(in); i++){
 		fscanf(in, "%s\n", coloracao);
 		sudoku_coloracao_string(sudoku3, coloracao);
 
@@ -85,8 +84,6 @@ int main(int argc , char *argv[]){
 
 		printf("%.9f;",tempoU);
 		printf("%.9f\n",tempoS);
-
-		i++;
 	}
 
 	return 0;
