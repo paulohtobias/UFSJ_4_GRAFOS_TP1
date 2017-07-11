@@ -15,8 +15,6 @@ void gui_novo_Sudoku(GtkButton *button, gpointer window){
     if(gsudoku != NULL){
         free_Sudoku(gsudoku->sudoku);
         gui_container_esvazia(lado_esquerdo);
-        gui_container_esvazia(gsudoku->box);
-        gui_container_esvazia(gsudoku->selecionador->box);
         free(gsudoku);
         gsudoku = NULL;
     }
