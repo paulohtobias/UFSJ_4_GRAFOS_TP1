@@ -54,9 +54,11 @@ void gui_novo_Sudoku(GtkButton *button, gpointer window){
             filename = gtk_file_chooser_get_filename(chooser);
             sudoku = novo_Sudoku_de_arquivo(filename);
             free(filename);
+            gtk_widget_destroy(dialog);
+        }else if(res == GTK_RESPONSE_CANCEL){
+            gtk_widget_destroy(dialog);
+            return;
         }
-
-        gtk_widget_destroy(dialog);
     }
     
     gsudoku = gui_cria_sudoku(sudoku);

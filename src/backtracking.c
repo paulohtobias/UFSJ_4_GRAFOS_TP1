@@ -71,8 +71,8 @@ void algoritmo_exato(Sudoku *sudoku){
     getchar();
 	/**/
 
-    int coloriu = 0;
-    while(!sfim(sudoku->grafo)){
+    int coloriu = 1;
+    while(coloriu){
         coloriu = 0;
         
         coloriu+= poda_vertice(sudoku);
