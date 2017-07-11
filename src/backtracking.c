@@ -6,7 +6,7 @@
 //A posição [i][0] indica quantas cores o vértice i pode assumir.
 int **possibilidades;
 
-//Inicializa a mtriz de possibilidades.
+//Inicializa a matriz de possibilidades.
 void inicializa_possibilidades(Sudoku *sudoku){
 	int i, j;
 	int n = sudoku->grafo->n;
@@ -61,51 +61,53 @@ void exato_colore(Sudoku *sudoku, int id, int cor){
 }
 
 //Função principal.
-void algoritmo_exato(Sudoku *sudoku){
+bool algoritmo_exato(Sudoku *sudoku){
 	inicializa_possibilidades(sudoku);
 
-    int coloriu = 1;
-    while(coloriu){
-        coloriu = 0;
+    while(true){
+        Exato_Estado estado_vertice = poda_vertice(sudoku);
+        if(estado_vertice == FIM){
+            return true;
+        }
         
-        coloriu+= poda_vertice(sudoku);
-        
-        coloriu+= poda_hiper_aresta(sudoku);
+        Exato_Estado estado_hiper = poda_hiper_aresta(sudoku);
+        if(estado_hiper == FIM){
+            return true;
+        }
 
-        if(coloriu == 0){
-
-            coloriu = backtracking(sudoku);
-            if(coloriu == 0){
-                return;
-            }
+        if(estado_vertice == NAO_COLORIU && estado_hiper == NAO_COLORIU){
+            return backtracking(sudoku);
         }
     }
 }
 
 //Funções de poda. Podem resolver o sudoku.
-int poda_vertice(Sudoku *sudoku){
+Exato_Estado poda_vertice(Sudoku *sudoku){
     int i;
     int n = sudoku->grafo->n;
 
-    int coloriu = 0;
+    Exato_Estado estado = FIM;
     for(i=0; i<n; i++){
         if(possibilidades[i][0] == 1){
+            if(estado == FIM){
+                estado = NAO_COLORIU;
+            }
             int cor;
             for(cor=1; cor<=sudoku->dimensao; cor++){
                 if(possibilidades[i][cor] == 1){
                     exato_colore(sudoku, i, cor);
-                    coloriu = 1;
+                    estado = COLORIU;
                 }
             }
         }
     }
-    return coloriu;
+    return estado;
 }
-int poda_hiper_aresta(Sudoku *sudoku){
+Exato_Estado poda_hiper_aresta(Sudoku *sudoku){
     int c, i, j;
     int d = sudoku->dimensao;
 
-    int coloriu = 0;
+    Exato_Estado estado = FIM;
     int total = 0;
 
     for(c=1; c<=d; c++){
@@ -116,17 +118,21 @@ int poda_hiper_aresta(Sudoku *sudoku){
             for(j=0; j<sudoku->grafo->tam_hiper_arestas && total <= 1; j++){
                 int v = sudoku->grafo->hiper_aresta[i][j];
                 if(possibilidades[v][c] == 1){
+                    if(estado == FIM){
+                        estado = NAO_COLORIU;
+                    }
+                    
                     total++;
                     id = v;
                 }
             }
             if(total == 1){
                 exato_colore(sudoku, id, c);                
-                coloriu = 1;
+                estado = COLORIU;
             }
         }
     }
-    return coloriu;
+    return estado;
 }
 
 //Funções de tentativa e erro.
@@ -155,6 +161,7 @@ bool backtracking(Sudoku *sudoku){
 				vetor_combinacao[k]++;
 			}
 			if(vetor_combinacao[menor_id_livre] > sudoku->dimensao){
+                printf("Ruim\n");
 				return false;
 			}else if(vetor_combinacao[k] > sudoku->dimensao){
 				vetor_combinacao[k] = 0;
@@ -169,55 +176,4 @@ bool backtracking(Sudoku *sudoku){
 		}
 	}
 	return true;
-}
-
-int sfim(Grafo *g){
-    int i, j;
-    for(i=0; i<g->n; i++){
-        if(g->cor[i] == 0){
-            return 0;
-        }
-        for(j=i+1; j<g->n; j++){
-            if(g->cor[j] == 0){
-                return 0;
-            }
-            if(grafo_existe_aresta_nd(g, i, j)){
-                if(g->cor[i] == g->cor[j]){
-                    return 0;
-                }
-            }
-        }
-    }
-    return 1;
-}
-void printP(int n, int d){
-    int i, j;
-    for(i=0; i<n; i++){
-        printf("%2d: ", i);
-        for(j=0; j<=d; j++){
-            printf("%d|", possibilidades[i][j]);
-        }
-        printf("\n");
-    }
-}
-void printS(Sudoku *sudoku){
-    int i, j;
-    int d, l, a;
-    d = sudoku->dimensao;
-    l = sudoku->largura;
-    a = sudoku->altura;
-
-    for(i=0; i<d; i++){
-        if(i%a == 0){
-            printf("\n");
-        }
-        for(j=0; j<d; j++){
-            int id = sudoku_lc_para_vertice_id(d, i, j);
-            if(j%l == 0){
-                printf("|");
-            }
-            printf("%3d ", sudoku->grafo->cor[id]);
-        }
-        printf("\n");
-    }
 }

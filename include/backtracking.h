@@ -3,6 +3,11 @@
 
 #include "sudoku.h"
 #define estatico -1
+typedef enum{
+    NAO_COLORIU = 0,
+    COLORIU = 1,
+    FIM
+}Exato_Estado;
 
 //Inicializa a mtriz de possibilidades.
 void inicializa_possibilidades(Sudoku *sudoku);
@@ -15,18 +20,14 @@ void atualiza_possibilidades(Sudoku *sudoku, int v, int cor);
 void exato_colore(Sudoku *sudoku, int id, int cor);
 
 //Função principal.
-void algoritmo_exato(Sudoku *sudoku);
+bool algoritmo_exato(Sudoku *sudoku);
 
 //Funções de poda. Podem resolver o sudoku.
-int poda_vertice(Sudoku *sudoku);
-int poda_hiper_aresta(Sudoku *sudoku);
+Exato_Estado poda_vertice(Sudoku *sudoku);
+Exato_Estado poda_hiper_aresta(Sudoku *sudoku);
 
 //Funções de tentativa e erro.
 void define_estaticos(int *vetor_combinacao, Grafo *grafo);
 bool backtracking(Sudoku *sudoku);
-
-int sfim(Grafo *g);
-void printP(int n, int d);
-void printS(Sudoku *sudoku);
 
 #endif //BACKTRACKING_H

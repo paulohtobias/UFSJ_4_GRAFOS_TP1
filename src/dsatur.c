@@ -85,7 +85,7 @@ int define_cores_iniciais(Grafo *grafo, int *vertices_cores){
 	return posicoes_restantes;
 }
 
-void dsatur(Sudoku *sudoku){
+bool dsatur(Sudoku *sudoku){
 	int i;
 	int quantidade_passou = 0;
 	int n = sudoku->grafo->n;
@@ -122,4 +122,5 @@ void dsatur(Sudoku *sudoku){
 	}
 	for(i=sudoku->dimensao; vertices_cores[i] > 0; i++){}
 	printf("%d;%d;",i,quantidade_passou);
+    return true;
 }

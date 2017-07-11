@@ -30,7 +30,8 @@ GtkWidget *gui_cria_grid( int *ids, int *cor);
 
 ///Preenche
 typedef struct{
-    void (*algoritmo)(Sudoku *sudoku);
+    bool (*algoritmo)(Sudoku *sudoku);
+    GtkWidget *window;
 }gui_preenche_dados;
 //Chama uma função (exata ou heurística) para preencher o Sudoku.
 void gui_preenche(GtkButton *button, gpointer data);

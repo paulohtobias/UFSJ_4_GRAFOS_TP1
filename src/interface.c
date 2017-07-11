@@ -55,7 +55,7 @@ void gui_novo_Sudoku(GtkButton *button, gpointer window){
             sudoku = novo_Sudoku_de_arquivo(filename);
             free(filename);
             gtk_widget_destroy(dialog);
-        }else if(res == GTK_RESPONSE_CANCEL){
+        }else{
             gtk_widget_destroy(dialog);
             return;
         }
@@ -155,20 +155,40 @@ GtkWidget *gui_cria_grid(int *ids, int *cor){
 
 //Chama uma função (exata ou heurística) para preencher o Sudoku.
 void gui_preenche(GtkButton *button, gpointer data){
-    //Chamando a função para completar o Sudoku.
     gui_preenche_dados *dado = data;
-    dado->algoritmo(gsudoku->sudoku);
     
-    printf("to aki1\n");
+    //Testando se existe um sudoku para ser resolvido.
+    if(gsudoku == NULL || gsudoku->sudoku == NULL){
+        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(dado->window),
+                                                   GTK_DIALOG_MODAL,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "Não existe sudoku.");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            return;
+    }
+    
+    //Chamando a função para completar o Sudoku.
+    dado->algoritmo(gsudoku->sudoku);
 
     int i;
     for(i=0; i<gsudoku->sudoku->grafo->n; i++){
-        printf("%d ", gsudoku->sudoku->grafo->cor[i]);
+        if(gsudoku->sudoku->grafo->cor[i] == 0){
+            GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(dado->window),
+                                                       GTK_DIALOG_MODAL,
+                                                       GTK_MESSAGE_ERROR,
+                                                       GTK_BUTTONS_OK,
+                                                       "Não há solução.");
+            gtk_dialog_run(GTK_DIALOG(dialog));
+            gtk_widget_destroy(dialog);
+            return;
+        }
         gui_colore_vertice(
             NULL,
             gui_colore_dados_novo(i, -1, -1, gsudoku->sudoku->grafo->cor[i])
         );
-    }printf("\n");
+    }
 }
 
 //Gera os sinais para os botões do grid.
@@ -366,11 +386,13 @@ int gui(int argc, char *argv[]){
     GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "btn_exato"));
     gui_preenche_dados dado_exato;
     dado_exato.algoritmo = algoritmo_exato;
+    dado_exato.window = janela;
     g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_exato);
     //Heurística
     GtkWidget *btn_heuristica = GTK_WIDGET(gtk_builder_get_object(builder, "btn_heuristica"));
     gui_preenche_dados dado_heuristica;
     dado_heuristica.algoritmo = dsatur;
+    dado_heuristica.window = janela;
     g_signal_connect(G_OBJECT(btn_heuristica), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_heuristica);
 
     gtk_widget_show_all(janela);

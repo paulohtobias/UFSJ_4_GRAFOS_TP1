@@ -10,6 +10,6 @@ int define_cores_iniciais(Grafo *grafo, int *vertices_cores);
 int vertice_maior_grau_saturacao(Grafo *grafo);
 
 ///Heuristica de busca mínima de cores em um grafo
-void dsatur(Sudoku *sudoku);
+bool dsatur(Sudoku *sudoku);
 
 #endif //DSATUR_H
