@@ -8,7 +8,7 @@ int **possibilidades;
 
 //Inicializa a mtriz de possibilidades.
 void inicializa_possibilidades(Sudoku *sudoku){
-	int i, j, k;
+	int i, j;
 	int n = sudoku->grafo->n;
 	//Iniciando a matriz.
     possibilidades = vetor2d(n, sudoku->dimensao + 1);
@@ -55,7 +55,6 @@ void atualiza_possibilidades(Sudoku *sudoku, int v, int cor){
 //Tenta colorir um vértice. Se conseguir, então a matriz de
 //possibilidades é atualizada.
 void exato_colore(Sudoku *sudoku, int id, int cor){
-	int dimensao = raiz_quadrado_perfeito(sudoku->grafo->n);
     if(grafo_colore_vertice(sudoku->grafo, id, cor) == true){
         atualiza_possibilidades(sudoku, id, cor);
     }
@@ -64,43 +63,23 @@ void exato_colore(Sudoku *sudoku, int id, int cor){
 //Função principal.
 void algoritmo_exato(Sudoku *sudoku){
 	inicializa_possibilidades(sudoku);
-    
-	/**
-    printP(sudoku->grafo->n, sudoku->dimensao);
-    printS(sudoku);
-    getchar();
-	/**/
 
     int coloriu = 1;
     while(coloriu){
         coloriu = 0;
         
         coloriu+= poda_vertice(sudoku);
-		/**
-        printP(sudoku->grafo->n, sudoku->dimensao);
-        printS(sudoku);
-        getchar();
-		/**/
         
         coloriu+= poda_hiper_aresta(sudoku);
-		/**
-        printP(sudoku->grafo->n, sudoku->dimensao);
-        printS(sudoku);
-        getchar();
-		/**/
 
         if(coloriu == 0){
-            //printf("BACKTRACKING: ");//getchar();
 
             coloriu = backtracking(sudoku);
             if(coloriu == 0){
-                //printf("Sem solução!\n");
                 return;
             }
         }
     }
-
-	//printf("Deu certo!\n");
 }
 
 //Funções de poda. Podem resolver o sudoku.
@@ -124,7 +103,6 @@ int poda_vertice(Sudoku *sudoku){
 }
 int poda_hiper_aresta(Sudoku *sudoku){
     int c, i, j;
-    int n = sudoku->grafo->n;
     int d = sudoku->dimensao;
 
     int coloriu = 0;
@@ -137,22 +115,13 @@ int poda_hiper_aresta(Sudoku *sudoku){
             id = 0;
             for(j=0; j<sudoku->grafo->tam_hiper_arestas && total <= 1; j++){
                 int v = sudoku->grafo->hiper_aresta[i][j];
-                int cor = sudoku->grafo->cor[v];
                 if(possibilidades[v][c] == 1){
                     total++;
                     id = v;
                 }
             }
             if(total == 1){
-                exato_colore(sudoku, id, c);
-                
-                /**
-                printP(sudoku->grafo->n, sudoku->dimensao);
-                printS(sudoku);
-                printf("Coloriu vertice %d com a cor %d\n", id, c);
-                getchar();
-                /**/
-                
+                exato_colore(sudoku, id, c);                
                 coloriu = 1;
             }
         }
