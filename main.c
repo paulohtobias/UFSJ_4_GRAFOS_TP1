@@ -6,7 +6,7 @@
 
 int main(int argc , char *argv[]){
     
-	gui(argc, argv);return 0;
+	//gui(argc, argv);return 0;
 	double tempoU,tempoS;
     struct rusage resources;
     struct timeval inicioU, inicioS, fimU, fimS;
@@ -38,11 +38,12 @@ int main(int argc , char *argv[]){
 		// Calcula o tempo do sistema.
 		tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
 
-		printf("backtraking; 9; 0; ");
+		printf("%5d: backtraking; 9; 0; ", i);
 		printf("%.9f;",tempoU);
 		printf("%.9f\n",tempoS);
 	}
 	fclose(in);
+	return 0;
 
 	in = fopen("testes/9.txt", "r");
 	sudoku3 = novo_Sudoku(3, 3);

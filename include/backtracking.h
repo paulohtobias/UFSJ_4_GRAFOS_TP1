@@ -30,4 +30,6 @@ Exato_Estado poda_hiper_aresta(Sudoku *sudoku);
 void define_estaticos(int *vetor_combinacao, Grafo *grafo);
 bool backtracking(Sudoku *sudoku);
 
+void printS(Sudoku *sudoku);
+
 #endif //BACKTRACKING_H

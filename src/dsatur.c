@@ -37,37 +37,6 @@ int vertice_maior_grau_saturacao(Grafo *grafo){
             }
         }
     }
-    /*
-	for(i = 0, maior = 0; i < n; i++){
-        if(grafo->cor[i] == sem_cor){
-            grau = 0;
-            saturacao = 0;
-            ///Percorre seus vizinhos
-            for(j = 0; j < n; j++){
-                ///Se for o vértice não foi colorido
-                if( grafo_existe_aresta_nd(grafo, i, j)){
-                    grau++; //Aumenta o grau do vertice
-                    if(grafo->cor[j] > 0){
-                        saturacao++; //Aumenta a saturação do vértice
-                    }
-                }
-            }
-
-            ///Se o vértice possuir maior saturação
-            if(satur_maior < saturacao ){
-                maior = i;
-                grau_maior = grau;
-                satur_maior = saturacao;
-
-            ///Se possuir maior grau e saturação igual ao maior mais antigo
-            }else if( satur_maior == saturacao && grau_maior < grau){
-                maior = i;
-                grau_maior = grau;
-            }
-        }
-	}
-    */
-
 	return maior;
 }
 
@@ -121,6 +90,5 @@ bool dsatur(Sudoku *sudoku){
 		}
 	}
 	for(i=sudoku->dimensao; vertices_cores[i] > 0; i++){}
-	printf("%d;%d;",i,quantidade_passou);
     return true;
 }

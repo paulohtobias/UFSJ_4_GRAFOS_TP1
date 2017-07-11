@@ -218,7 +218,7 @@ void gui_sudoku_button_signal_connect(){
 ///Define o valor a ser inserido no sudoku.
 void define_valor_a_inserir(GtkButton *button, gpointer data){
     int valor = atoi((char*) data);
-    printf("insere: %d\n", valor);
+    //printf("insere: %d\n", valor);
     valor_a_inserir = valor;
 }
 
@@ -375,7 +375,7 @@ int gui(int argc, char *argv[]){
 
     g_signal_connect(G_OBJECT(janela), "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
-    ///Conectando o botão de criar grafo.
+    ///Conectando o botão de criar sudoku.
     GtkWidget *btn_criar = GTK_WIDGET(gtk_builder_get_object(builder, "btn_novo_sudoku"));
     g_signal_connect(G_OBJECT(btn_criar), "clicked", G_CALLBACK(gui_novo_Sudoku), (void*)janela);
 
