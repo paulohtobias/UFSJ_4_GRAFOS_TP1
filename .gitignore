@@ -91,3 +91,7 @@ $RECYCLE.BIN/
 nbproject/
 
 interface\.glade~
+
+*.zip
+
+*.pdf

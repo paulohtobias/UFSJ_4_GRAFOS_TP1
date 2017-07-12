@@ -5,73 +5,37 @@
 #include "interface.h"
 
 int main(int argc , char *argv[]){
+	GtkWidget *janela;
+
+    gtk_init(&argc, &argv);
+
+    extern GtkBuilder *builder;
+	builder = gtk_builder_new_from_file("interface.glade");
+
+    janela = GTK_WIDGET(gtk_builder_get_object(builder, "janela_principal"));
+
+    g_signal_connect(G_OBJECT(janela), "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
-	//gui(argc, argv);return 0;
-	double tempoU,tempoS;
-    struct rusage resources;
-    struct timeval inicioU, inicioS, fimU, fimS;
+    ///Conectando o botão de criar sudoku.
+    GtkWidget *btn_criar = GTK_WIDGET(gtk_builder_get_object(builder, "btn_novo_sudoku"));
+    g_signal_connect(G_OBJECT(btn_criar), "clicked", G_CALLBACK(gui_novo_Sudoku), (void*)janela);
 
-    
-	int i, inicio = 0, l = INF;
-	FILE *in = fopen("testes/9.txt", "r");
-	char coloracao[100];
-	Sudoku *sudoku3 = novo_Sudoku(3, 3);
-	for(i=inicio; i<l && !feof(in); i++){
-		fscanf(in, "%s\n", coloracao);
-		sudoku_coloracao_string(sudoku3, coloracao);
+    ///Conectando os botões dos algoritmos.
+    //Exato
+    GtkWidget *btn_exato = GTK_WIDGET(gtk_builder_get_object(builder, "btn_exato"));
+    gui_preenche_dados dado_exato;
+    dado_exato.algoritmo = algoritmo_exato;
+    dado_exato.window = janela;
+    g_signal_connect(G_OBJECT(btn_exato), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_exato);
+    //Heurística
+    GtkWidget *btn_heuristica = GTK_WIDGET(gtk_builder_get_object(builder, "btn_heuristica"));
+    gui_preenche_dados dado_heuristica;
+    dado_heuristica.algoritmo = dsatur;
+    dado_heuristica.window = janela;
+    g_signal_connect(G_OBJECT(btn_heuristica), "clicked", G_CALLBACK(gui_preenche), (void*)&dado_heuristica);
 
-		//Inicia a contagem de tempo do usuario e sistema.
-		getrusage(RUSAGE_SELF, &resources);
+    gtk_widget_show_all(janela);
+    gtk_main();
 
-		inicioU = resources.ru_utime;
-		inicioS = resources.ru_stime;
-
-		algoritmo_exato(sudoku3);
-
-		getrusage(RUSAGE_SELF, &resources);
-
-		fimU = resources.ru_utime;
-		fimS = resources.ru_stime;
-
-		// Calcula o tempo do usuario.
-		tempoU = (double) (fimU.tv_sec - inicioU.tv_sec) + 1.e-6 * (double) (fimU.tv_usec - inicioU.tv_usec);
-		// Calcula o tempo do sistema.
-		tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
-
-		printf("%5d: backtraking; 9; 0; ", i);
-		printf("%.9f;",tempoU);
-		printf("%.9f\n",tempoS);
-	}
-	fclose(in);
-	return 0;
-
-	in = fopen("testes/9.txt", "r");
-	sudoku3 = novo_Sudoku(3, 3);
-	for(i=inicio; i<l && !feof(in); i++){
-		fscanf(in, "%s\n", coloracao);
-		sudoku_coloracao_string(sudoku3, coloracao);
-
-		//Inicia a contagem de tempo do usuario e sistema.
-		printf("heuristica;");
-		getrusage(RUSAGE_SELF, &resources);
-
-		inicioU = resources.ru_utime;
-		inicioS = resources.ru_stime;		
-
-		dsatur(sudoku3);
-
-		getrusage(RUSAGE_SELF, &resources);
-
-		fimU = resources.ru_utime;
-		fimS = resources.ru_stime;
-
-		// Calcula o tempo do usuario.
-		tempoU = (double) (fimU.tv_sec - inicioU.tv_sec) + 1.e-6 * (double) (fimU.tv_usec - inicioU.tv_usec);
-		// Calcula o tempo do sistema.
-		tempoS = (double) (fimS.tv_sec - inicioS.tv_sec) + 1.e-6 * (double) (fimS.tv_usec - inicioS.tv_usec);
-
-		printf("%.9f;",tempoU);
-		printf("%.9f\n",tempoS);
-	}
-	return 0;
+    return 0;
 }

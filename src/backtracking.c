@@ -66,33 +66,16 @@ bool algoritmo_exato(Sudoku *sudoku){
 
     while(true){
         Exato_Estado estado_vertice = poda_vertice(sudoku);
-        
-        /**
-        printP(sudoku->grafo->n, sudoku->dimensao);
-        printS(sudoku);
-        printf("V: %d\n", estado_vertice);getchar();
-        /**/
-        
         if(estado_vertice == FIM){
-            //printf("FIM v\n");
             return true;
         }
         
         Exato_Estado estado_hiper = poda_hiper_aresta(sudoku);
-        
-        /**
-        printP(sudoku->grafo->n, sudoku->dimensao);
-        printS(sudoku);
-        printf("A: %d\n", estado_vertice);getchar();
-        /**/
-        
         if(estado_hiper == FIM){
-            //printf("FIM a\n");
             return true;
         }
 
         if(estado_vertice == NAO_COLORIU && estado_hiper == NAO_COLORIU){
-            //printf("back\n");
             return backtracking(sudoku);
         }
     }
@@ -184,7 +167,6 @@ bool backtracking(Sudoku *sudoku){
 				vetor_combinacao[k]++;
 			}
 			if(vetor_combinacao[menor_id_livre] > sudoku->dimensao){
-                printf("Ruim\n");
 				return false;
 			}else if(vetor_combinacao[k] > sudoku->dimensao){
 				vetor_combinacao[k] = 0;
@@ -199,37 +181,4 @@ bool backtracking(Sudoku *sudoku){
 		}
 	}
 	return true;
-}
-
-void printP(int n, int d){
-    int i, j;
-    for(i=0; i<n; i++){
-        printf("%2d: ", i);
-        for(j=0; j<=d; j++){
-            printf("%d|", possibilidades[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-void printS(Sudoku *sudoku){
-    int i, j;
-    int d, l, a;
-    d = sudoku->dimensao;
-    l = sudoku->largura;
-    a = sudoku->altura;
-
-    for(i=0; i<d; i++){
-        if(i%a == 0){
-            printf("\n");
-        }
-        for(j=0; j<d; j++){
-            int id = sudoku_lc_para_vertice_id(d, i, j);
-            if(j%l == 0){
-                printf("|");
-            }
-            printf("%3d ", sudoku->grafo->cor[id]);
-        }
-        printf("\n");
-    }
 }
